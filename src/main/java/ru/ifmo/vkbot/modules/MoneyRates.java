@@ -39,7 +39,7 @@ public class MoneyRates extends BotModule {
             String rate = doc.select("div.currency-table").select("div.currency-table__rate__num").first().text();
             getMC().sendAttached(m.getDialog(), "Курс " + symbol + " на данный момент: " + rate + " руб.", m.getMessageId());
         }catch(Exception ex) {
-            throw new IllegalStateException(ex);
+            getMC().sendAttached(m.getDialog(), "Я не могу найти такой валюты :(", m.getMessageId());
         }
     }
 

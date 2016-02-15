@@ -63,7 +63,6 @@ public class VkBot {
             Administration.loadAdmins(this.administration);
             Staff.loadStaff(this.staff);
             Logger.log("Loading meme templates..");
-//            ManageMemeTemplates.loadAllTemplates();
         }catch(IOException | NumberFormatException ex) {
             Logger.warn("Could not read configuration file! Shutting down!", ex);
             System.exit(0);
@@ -122,7 +121,7 @@ public class VkBot {
     }
     
     public boolean isModerator(long uid) {
-        return isAdministrator(uid);
+        return staff.contains(uid) || isAdministrator(uid);
     }
     
     public static VkBot getInstance() {

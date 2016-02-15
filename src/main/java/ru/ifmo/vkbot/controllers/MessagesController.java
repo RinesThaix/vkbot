@@ -192,7 +192,6 @@ public class MessagesController extends Thread {
     public static class MessagesLinker {
         
         private final static Map<String, Object> handlers = new HashMap();
-        private final static Map<String, Integer> notArgsMap = new HashMap();
         
         private final VkBot vkbot;
         private final MessagesController msgc;
@@ -232,7 +231,6 @@ public class MessagesController extends Thread {
                 try {
                     ((BotModule) handler).handle(m, parsed.getB());
                 }catch(Exception ex) {
-                    ex.printStackTrace();
                     Logger.warn("Could not handle message using " + handler.toString(), ex);
                     msgc.sendAttached(m.getDialog(), "К сожалению, я не смогла обработать это сообщение. "
                             + "Если вы уверены, что ввели его верно, пожалуйста, обратитесь к администрации бота.",
@@ -244,7 +242,7 @@ public class MessagesController extends Thread {
             String lphrase = phrase.toLowerCase();
             for(String key : handlers.keySet())
                 if(lphrase.startsWith(key))
-                    return split(key, phrase, notArgsMap.get(key));
+                    return split(key, phrase, key.split(" ").length);
             return new Pair("null", null);
         }
         
@@ -258,48 +256,47 @@ public class MessagesController extends Thread {
         
         private void loadModules() {
             handlers.put("null", "Прости, но я не поняла, что ты хотел сказать :(");
-            add("помощь", new Help(vkbot), 1);
-            add("привет", new Hello(vkbot), 1);
-            add("md5", new MD5(vkbot), 1);
-            add("инфа", new Infa(vkbot), 1);
-            add("кто", new Who(vkbot), 1);
-            add("когда", new When(vkbot), 1);
-            add("расписание", new Scheduler(vkbot), 1);
-            add("найди музыку", new MusicSearch(vkbot), 2);
-            add("курс", new MoneyRates(vkbot), 1);
-            add("новости", new News(vkbot), 1);
-            add("давай поговорим", new StartTalking(vkbot), 2);
-            add("хватит разговоров", new EndTalking(vkbot), 2);
-            add("администраторы", new Administration(vkbot), 1);
-            add("модераторы", new Staff(vkbot), 1);
-            add("создай голосование", new VoteCreation(vkbot), 2);
-            add("я голосую за", new VoteVote(vkbot), 3);
-            add("покажи голосование", new VoteShow(vkbot), 2);
-            add("создай мем", new MemeCreate(vkbot), 2);
-            add("шаблоны для мемов", new MemeTemplateList(vkbot), 3);
+            add("помощь", new Help(vkbot));
+            add("привет", new Hello(vkbot));
+            add("md5", new MD5(vkbot));
+            add("инфа", new Infa(vkbot));
+            add("кто", new Who(vkbot));
+            add("когда", new When(vkbot));
+            add("расписание", new Scheduler(vkbot));
+            add("найди музыку", new MusicSearch(vkbot));
+            add("курс", new MoneyRates(vkbot));
+            add("новости", new News(vkbot));
+            add("давай поговорим", new StartTalking(vkbot));
+            add("хватит разговоров", new EndTalking(vkbot));
+            add("администраторы", new Administration(vkbot));
+            add("модераторы", new Staff(vkbot));
+            add("создай голосование", new VoteCreation(vkbot));
+            add("я голосую за", new VoteVote(vkbot));
+            add("покажи голосование", new VoteShow(vkbot));
+            add("создай мем", new MemeCreate(vkbot));
+            add("шаблоны для мемов", new MemeTemplateList(vkbot));
             
             //FOR MODERATORS
             //
             
             //FOR ADMINISTRATORS
-            add("забань", new Ban(vkbot), 1);
-            add("разбань", new Unban(vkbot), 1);
-            add("добавь меня в чат", new AddToChat(vkbot), 4);
-            add("отправь", new SendDirectly(vkbot), 1);
-            add("засыпай", new Sleep(vkbot), 1);
-            add("добавь шаблон для мемов", new MemeTemplateAdd(vkbot), 4);
-            add("удали шаблон для мемов", new MemeTemplateRemove(vkbot), 4);
+            add("забань", new Ban(vkbot));
+            add("разбань", new Unban(vkbot));
+            add("добавь меня в чат", new AddToChat(vkbot));
+            add("отправь", new SendDirectly(vkbot));
+            add("засыпай", new Sleep(vkbot));
+            add("добавь шаблон для мемов", new MemeTemplateAdd(vkbot));
+            add("удали шаблон для мемов", new MemeTemplateRemove(vkbot));
             
             //SECRETS
-            add("скаков", new McSkakov(vkbot), 1);
-            add("swag", new SWAG(vkbot), 1);
-            add("скалениум", new Skalenium(vkbot), 1);
-            add("88005553535", new Telephone(vkbot), 1);
+            add("скаков", new McSkakov(vkbot));
+            add("swag", new SWAG(vkbot));
+            add("скалениум", new Skalenium(vkbot));
+            add("88005553535", new Telephone(vkbot));
         }
         
-        private void add(String key, BotModule module, int notArgs) {
+        private void add(String key, BotModule module) {
             handlers.put(key, module);
-            notArgsMap.put(key, notArgs);
         }
         
     }
