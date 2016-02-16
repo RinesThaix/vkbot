@@ -229,7 +229,10 @@ public class MessagesController extends Thread {
                 msgc.sendAttached(m.getDialog(), (String) handler, m.getMessageId());
             else
                 try {
-                    ((BotModule) handler).handle(m, parsed.getB());
+                    BotModule module = (BotModule) handler;
+                    if(module.isLoggable())
+                        ;
+                    module.handle(m, parsed.getB());
                 }catch(Exception ex) {
                     Logger.warn("Could not handle message using " + handler.toString(), ex);
                     msgc.sendAttached(m.getDialog(), "К сожалению, я не смогла обработать это сообщение. "

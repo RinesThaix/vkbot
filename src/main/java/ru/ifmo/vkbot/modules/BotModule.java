@@ -14,9 +14,15 @@ public abstract class BotModule {
     private final static Random r = new Random();
     
     private final VkBot vkbot;
+    private final boolean loggable;
     
     public BotModule(VkBot vkbot) {
+        this(vkbot, false);
+    }
+    
+    public BotModule(VkBot vkbot, boolean loggable) {
         this.vkbot = vkbot;
+        this.loggable = loggable;
     }
 
     public abstract void handle(Message m, String[] args);
@@ -47,6 +53,10 @@ public abstract class BotModule {
     
     protected Random getRandom() {
         return r;
+    }
+    
+    public boolean isLoggable() {
+        return loggable;
     }
     
     protected String toString(String[] args) {

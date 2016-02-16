@@ -32,6 +32,11 @@ public class Scheduler extends BotModule {
         if(args[iday].equals("группы"))
             ++iday;
         String group = args[iday].toUpperCase();
+        char c = group.charAt(0);
+        if(c < 'A' || c > 'Z') {
+            getMC().sendAttached(m.getDialog(), "Первый символ в номере группы должен быть латинской буквой!", m.getMessageId());
+            return;
+        }
         if(args[++iday].equals("на"))
             ++iday;
         String day = args[iday];

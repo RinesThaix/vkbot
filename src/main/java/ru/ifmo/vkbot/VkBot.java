@@ -14,6 +14,8 @@ import ru.ifmo.vkbot.structures.Message;
 import ru.ifmo.vkbot.utils.Configuration;
 import ru.ifmo.vkbot.utils.Logger;
 import ru.ifmo.vkbot.utils.PostExecutor;
+import ru.ifmo.vkbot.utils.sql.Connector;
+import ru.ifmo.vkbot.utils.sql.ConnectorBuilder;
 
 /**
  *
@@ -36,6 +38,8 @@ public class VkBot {
     private FriendsController friendsc;
     private MemesTemplatesController mtc;
     
+    private Connector connector;
+    
     public VkBot() {
         instance = this;
         enable();
@@ -54,6 +58,12 @@ public class VkBot {
             List staff = new ArrayList();
             staff.add("1");
             staff = config.getList("staff", staff);
+            Logger.log("Loading database properties..");
+            String host = config.getString("db.host", "localhost");
+            String user = config.getString("db.user", "root");
+            String pass = config.getString("db.pass", "root");
+            String db = config.getString("db.database", "vkbot");
+            connector = new ConnectorBuilder("db", host, user, pass, db).build(true);
             config.save();
             for(Object s : admins)
                 administration.add(Long.parseLong((String) s));
@@ -62,11 +72,11 @@ public class VkBot {
             Logger.log("Preloading administration & staff names..");
             Administration.loadAdmins(this.administration);
             Staff.loadStaff(this.staff);
-            Logger.log("Loading meme templates..");
         }catch(IOException | NumberFormatException ex) {
             Logger.warn("Could not read configuration file! Shutting down!", ex);
             System.exit(0);
         }
+        Logger.log("Preparing all of controllers..");
         this.friendsc = new FriendsController(this);
         this.banc = new BanController();
         this.msgc = new MessagesController(this);
@@ -114,6 +124,10 @@ public class VkBot {
     
     public MemesTemplatesController getMemesTemplatesController() {
         return mtc;
+    }
+    
+    public Connector getConnector() {
+        return connector;
     }
     
     public boolean isAdministrator(long uid) {
