@@ -14,8 +14,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import ru.ifmo.vkbot.utils.Logger;
 
-public class Connector
-        extends Thread {
+public class Connector extends Thread {
 
     private static List<Connector> list = new LinkedList();
     private String user;
@@ -48,6 +47,10 @@ public class Connector
             return this.queryQueue.offer(query);
         }
         throw new IllegalStateException("This connector isn't accepting queries");
+    }
+
+    public boolean addToQueue(String query, Object... args) {
+        return addToQueue(String.format(query, args));
     }
 
     public void run() {
@@ -132,6 +135,10 @@ public class Connector
         return false;
     }
 
+    public ResultSet query(String query, Object... args) {
+        return query(String.format(query, args));
+    }
+
     public ResultSet query(String query) {
         Statement statement = null;
         ResultSet result = null;
@@ -181,7 +188,7 @@ public class Connector
             return connection.prepareStatement(query);
         } catch (SQLException e) {
             if (!e.toString().contains("not return ResultSet")) {
-            Logger.warn("Error in SQL prepare-query: " + query + "!", e);
+                Logger.warn("Error in SQL prepare-query: " + query + "!", e);
             }
         }
         return ps;

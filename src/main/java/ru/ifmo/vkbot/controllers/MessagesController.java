@@ -230,9 +230,12 @@ public class MessagesController extends Thread {
             else
                 try {
                     BotModule module = (BotModule) handler;
-                    if(module.isLoggable())
-                        ;
-                    module.handle(m, parsed.getB());
+                    if(module.handle0(m, parsed.getB()) && module.isLoggable())
+                        vkbot.getConnector().addToQueue("INSERT INTO vkbot_logger VALUES (%d, %d, %d, '%s')",
+                                m.getSender(),
+                                vkbot.isAdministrator(m.getSender()) ? 2 : vkbot.isModerator(m.getSender()) ? 1 : 0,
+                                System.currentTimeMillis(),
+                                m.getMessage());
                 }catch(Exception ex) {
                     Logger.warn("Could not handle message using " + handler.toString(), ex);
                     msgc.sendAttached(m.getDialog(), "К сожалению, я не смогла обработать это сообщение. "

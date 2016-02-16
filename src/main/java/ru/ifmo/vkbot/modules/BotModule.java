@@ -14,34 +14,34 @@ public abstract class BotModule {
     private final static Random r = new Random();
     
     private final VkBot vkbot;
+    private final Group needed;
     private final boolean loggable;
     
     public BotModule(VkBot vkbot) {
-        this(vkbot, false);
+        this(vkbot, Group.USER, false);
     }
     
-    public BotModule(VkBot vkbot, boolean loggable) {
+    public BotModule(VkBot vkbot, Group needed) {
+        this(vkbot, needed, true);
+    }
+    
+    public BotModule(VkBot vkbot, Group needed, boolean loggable) {
         this.vkbot = vkbot;
+        this.needed = needed;
         this.loggable = loggable;
+    }
+    
+    public boolean handle0(Message m, String[] args) {
+        Group g = vkbot.getGroup(m.getSender());
+        if(g.compareTo(needed) < 0) {
+            getMC().sendAttached(m.getDialog(), "Прости, но у тебя недостаточно прав для исполнения этой команды :(", m.getMessageId());
+            return false;
+        }
+        handle(m, args);
+        return true;
     }
 
     public abstract void handle(Message m, String[] args);
-    
-    public final boolean checkAdministrator(Message m) {
-        if(!vkbot.isAdministrator(m.getSender())) {
-            getMC().sendAttached(m.getDialog(), "Это действие доступно только моим администраторам!", m.getMessageId());
-            return false;
-        }
-        return true;
-    }
-    
-    public final boolean checkModerator(Message m) {
-        if(!vkbot.isModerator(m.getSender())) {
-            getMC().sendAttached(m.getDialog(), "Это действие доступно только моим модераторам и администраторам!", m.getMessageId());
-            return false;
-        }
-        return true;
-    }
     
     protected VkBot getVkBot() {
         return vkbot;
@@ -68,6 +68,12 @@ public abstract class BotModule {
         String s = sb.toString();
         s = s.substring(0, s.length() - 1);
         return s;
+    }
+    
+    public static enum Group {
+        USER,
+        MODERATOR,
+        ADMINISTRATOR;
     }
     
 }

@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import ru.ifmo.vkbot.controllers.*;
 import ru.ifmo.vkbot.modules.Administration;
+import ru.ifmo.vkbot.modules.BotModule.Group;
 import ru.ifmo.vkbot.modules.Staff;
 import ru.ifmo.vkbot.structures.Message;
 import ru.ifmo.vkbot.utils.Configuration;
@@ -16,6 +17,7 @@ import ru.ifmo.vkbot.utils.Logger;
 import ru.ifmo.vkbot.utils.PostExecutor;
 import ru.ifmo.vkbot.utils.sql.Connector;
 import ru.ifmo.vkbot.utils.sql.ConnectorBuilder;
+import ru.ifmo.vkbot.utils.sql.TablesLoader;
 
 /**
  *
@@ -58,18 +60,27 @@ public class VkBot {
             List staff = new ArrayList();
             staff.add("1");
             staff = config.getList("staff", staff);
+            
             Logger.log("Loading database properties..");
             String host = config.getString("db.host", "localhost");
             String user = config.getString("db.user", "root");
             String pass = config.getString("db.pass", "root");
             String db = config.getString("db.database", "vkbot");
-            connector = new ConnectorBuilder("db", host, user, pass, db).build(true);
             config.save();
+            connector = new ConnectorBuilder()
+                .setName("vkbot_connector")
+                .setHost(config.getString("db.host", "localhost") + ":3306")
+                .setUser(config.getString("db.user", "root")).setPassword(config.getString("db.pass", "root"))
+                .setDatabase(config.getString("db.database", "vkbot"))
+                .setCharacterEncoding(ConnectorBuilder.CharacterEncoding.CP1251)
+                .setAutoReconnect(true).setAutoReconnectRetries(10).build(true);
+            TablesLoader.load(connector);
+            
+            Logger.log("Preloading administration & staff names..");
             for(Object s : admins)
                 administration.add(Long.parseLong((String) s));
             for(Object s : staff)
                 this.staff.add(Long.parseLong((String) s));
-            Logger.log("Preloading administration & staff names..");
             Administration.loadAdmins(this.administration);
             Staff.loadStaff(this.staff);
         }catch(IOException | NumberFormatException ex) {
@@ -92,6 +103,7 @@ public class VkBot {
     public void disable() {
         Logger.log("Disabling VkBot v%s..", version);
         this.msgc.disable();
+        Connector.shutdownAll();
         try {
             Thread.sleep(1000l);
         }catch(InterruptedException ex) {}
@@ -128,6 +140,10 @@ public class VkBot {
     
     public Connector getConnector() {
         return connector;
+    }
+    
+    public Group getGroup(long uid) {
+        return isAdministrator(uid) ? Group.ADMINISTRATOR : isModerator(uid) ? Group.MODERATOR : Group.USER;
     }
     
     public boolean isAdministrator(long uid) {
