@@ -43,7 +43,10 @@ public class PostExecutor {
     
     public static String executeAndGet(String urlGet) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(execute(urlGet), "UTF-8"))) {
-            return reader.readLine();
+            String line = reader.readLine();
+            if(line == null)
+                Logger.warn("Received unexpectable answer from " + urlGet);
+            return line;
         }catch(Exception ex) {
             Logger.warn("Could not execute query to VkAPI!", ex);
             return null;

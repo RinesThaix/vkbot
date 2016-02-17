@@ -12,13 +12,11 @@ public class Bans {
     public static class Ban extends BotModule {
 
         public Ban(VkBot vkbot) {
-            super(vkbot);
+            super(vkbot, Group.ADMINISTRATOR);
         }
 
         @Override
         public void handle(Message m, String[] args) {
-            if(!checkAdministrator(m))
-                return;
             if(args.length != 1) {
                 getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", m.getMessageId());
                 return;
@@ -42,13 +40,11 @@ public class Bans {
     public static class Unban extends BotModule {
 
         public Unban(VkBot vkbot) {
-            super(vkbot);
+            super(vkbot, Group.ADMINISTRATOR);
         }
 
         @Override
         public void handle(Message m, String[] args) {
-            if(!checkAdministrator(m))
-                return;
             if(args.length != 1) {
                 getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", m.getMessageId());
                 return;

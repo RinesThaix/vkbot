@@ -11,13 +11,11 @@ import ru.ifmo.vkbot.utils.PostExecutor;
 public class AddToChat extends BotModule {
 
     public AddToChat(VkBot vkbot) {
-        super(vkbot);
+        super(vkbot, Group.ADMINISTRATOR);
     }
 
     @Override
     public void handle(Message m, String[] args) {
-        if(!checkAdministrator(m))
-            return;
         if(args.length != 1) {
             getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", m.getMessageId());
             return;

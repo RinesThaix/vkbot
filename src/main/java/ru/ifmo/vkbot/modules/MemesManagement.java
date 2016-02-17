@@ -12,13 +12,11 @@ public class MemesManagement {
     public static class MemeTemplateAdd extends BotModule {
 
         public MemeTemplateAdd(VkBot vkbot) {
-            super(vkbot);
+            super(vkbot, Group.ADMINISTRATOR);
         }
 
         @Override
         public void handle(Message m, String[] args) {
-            if(!checkAdministrator(m))
-                return;
             if(args.length != 1) {
                 getMC().sendAttached(m.getDialog(), "Неверное число аргументов!", m.getMessageId());
                 return;
@@ -41,13 +39,11 @@ public class MemesManagement {
     public static class MemeTemplateRemove extends BotModule {
 
         public MemeTemplateRemove(VkBot vkbot) {
-            super(vkbot);
+            super(vkbot, Group.ADMINISTRATOR);
         }
 
         @Override
         public void handle(Message m, String[] args) {
-            if(!checkAdministrator(m))
-                return;
             if(args.length != 1) {
                 getMC().sendAttached(m.getDialog(), "Неверное число аргументов!", m.getMessageId());
                 return;

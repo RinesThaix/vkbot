@@ -10,13 +10,11 @@ import ru.ifmo.vkbot.structures.Message;
 public class SendDirectly extends BotModule {
 
     public SendDirectly(VkBot vkbot) {
-        super(vkbot);
+        super(vkbot, Group.ADMINISTRATOR, false);
     }
 
     @Override
     public void handle(Message m, String[] args) {
-        if(!checkAdministrator(m))
-            return;
         if(args.length < 2) {
             getMC().sendAttached(m.getDialog(), "Недостаточно аргументов.", m.getMessageId());
             return;
