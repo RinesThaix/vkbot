@@ -70,6 +70,34 @@ public abstract class BotModule {
         return s;
     }
     
+    protected String[] parseQuotes(String[] args, int amount, int startArg) {
+        int current = startArg, next = -1;
+        String[] answer = new String[amount];
+        for(int count = 0; count < amount; ++count) {
+            StringBuilder sb = new StringBuilder();
+            for(int i = current; i < args.length; ++i) {
+                String s = args[i];
+                if(i == current) {
+                    if(!s.startsWith("\""))
+                        return null;
+                    if(s.endsWith("\"") && s.length() > 1) {
+                        next = i + 1;
+                        sb.append(s.replace("\"", ""));
+                        break;
+                    }
+                }else if(s.endsWith("\"")) {
+                    sb.append(s.replace("\"", ""));
+                    next = i + 1;
+                    break;
+                }
+                sb.append(s.replace("\"", "")).append(" ");
+            }
+            answer[count] = sb.toString();
+            current = next;
+        }
+        return answer;
+    }
+    
     public static enum Group {
         USER,
         MODERATOR,

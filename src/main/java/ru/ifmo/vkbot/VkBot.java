@@ -39,6 +39,7 @@ public class VkBot {
     private BanController banc;
     private FriendsController friendsc;
     private MemesTemplatesController mtc;
+    private ClassificationController cc;
     
     private Connector connector;
     
@@ -92,6 +93,7 @@ public class VkBot {
         this.banc = new BanController();
         this.msgc = new MessagesController(this);
         this.mtc = new MemesTemplatesController();
+        this.cc = ClassificationController.load();
         PostExecutor.buildAndGet("status.set", "text", PostExecutor.encode("Милаша v%s", version));
         
         Logger.log("Initialization completed! Now starting reading from console.");
@@ -103,6 +105,7 @@ public class VkBot {
     public void disable() {
         Logger.log("Disabling VkBot v%s..", version);
         this.msgc.disable();
+        this.cc.save();
         Connector.shutdownAll();
         try {
             Thread.sleep(1000l);
@@ -136,6 +139,10 @@ public class VkBot {
     
     public MemesTemplatesController getMemesTemplatesController() {
         return mtc;
+    }
+    
+    public ClassificationController getClassificationController() {
+        return cc;
     }
     
     public Connector getConnector() {

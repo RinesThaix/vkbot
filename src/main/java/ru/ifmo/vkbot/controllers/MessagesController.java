@@ -1,5 +1,7 @@
 package ru.ifmo.vkbot.controllers;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import org.json.simple.JSONObject;
 import ru.ifmo.vkbot.VkBot;
 import ru.ifmo.vkbot.modules.*;
 import ru.ifmo.vkbot.modules.Bans.*;
+import ru.ifmo.vkbot.modules.HandlersWorker.*;
 import ru.ifmo.vkbot.modules.MemesManagement.*;
 import ru.ifmo.vkbot.modules.ModersManagement.*;
 import ru.ifmo.vkbot.modules.Secrets.*;
@@ -252,7 +255,8 @@ public class MessagesController extends Thread {
             for(String key : handlers.keySet())
                 if(lphrase.startsWith(key))
                     return split(key, phrase, key.split(" ").length);
-            return new Pair("null", null);
+            String key = vkbot.getClassificationController().classify(phrase);
+            return key.equals("null") ? new Pair(key, null) : split(key, phrase, key.split(" ").length);
         }
         
         private Pair<String, String[]> split(String key, String phrase, int notArgs) {
@@ -286,7 +290,8 @@ public class MessagesController extends Thread {
             add("шаблоны для мемов", new MemeTemplateList(vkbot));
             
             //FOR MODERATORS
-            //
+            add("обнови модуль", new UpdateCustomHandler(vkbot));
+            add("запомни", new Study(vkbot));
             
             //FOR ADMINISTRATORS
             add("забань", new Ban(vkbot));
@@ -304,10 +309,39 @@ public class MessagesController extends Thread {
             add("swag", new SWAG(vkbot));
             add("скалениум", new Skalenium(vkbot));
             add("88005553535", new Telephone(vkbot));
+            
+            //CUSTOM
+            try(ResultSet set = vkbot.getConnector().query("SELECT * FROM vkbot_text_modules")) {
+                while(set.next()) {
+                    String name = set.getString(1);
+                    handlers.put(name, new CustomHandler(vkbot, name, set.getString(2)));
+                }
+            }catch(SQLException ex) {
+                Logger.warn("Could not load text handlers!", ex);
+            }
         }
         
         private void add(String key, BotModule module) {
             handlers.put(key, module);
+        }
+        
+        public Set<String> getHandlers() {
+            return handlers.keySet();
+        }
+        
+        public void createHandler(String name, String text) {
+            name = "#" + name;
+            text = text.replace("|", "");
+            if(handlers.containsKey(name))
+                ((CustomHandler) handlers.get(name)).update(text);
+            else {
+                handlers.put(name, new CustomHandler(vkbot, name, text));
+                vkbot.getConnector().addToQueue("INSERT INTO vkbot_text_modules VALUES ('%s', '%s')", name, text);
+            }
+        }
+        
+        public BotModule getHandler(String name) {
+            return (BotModule) handlers.get(name);
         }
         
     }

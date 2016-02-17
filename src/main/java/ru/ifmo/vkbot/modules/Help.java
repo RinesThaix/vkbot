@@ -2,6 +2,7 @@ package ru.ifmo.vkbot.modules;
 
 import ru.ifmo.vkbot.VkBot;
 import ru.ifmo.vkbot.structures.Message;
+import ru.ifmo.vkbot.utils.Logger;
 
 /**
  *
@@ -22,7 +23,7 @@ public class Help extends BotModule {
         sb.append("- кто [сообщение] - случайный выбор человека из конфы.\n");
         sb.append("- md5 [сообщение] - посчитать md5.\n");
         sb.append("- расписание для [группа] на [день недели] - расписание пар.\n");
-        sb.append("- создай мем <шаблон> [текст сверху] <текст снизу> - создать "
+        sb.append("- создай мем <шаблон> \"[текст сверху]\" \"<текст снизу>\" - создать "
                 + "мем на основе существующего шаблона или используя прикрепленную картинку.\n");
         sb.append("- шаблоны для мемов - показать доступные шаблоны для мемов.\n");
         sb.append("- новости - выводит новости к этому часу.\n");
@@ -34,7 +35,8 @@ public class Help extends BotModule {
         sb.append("- я голосую за [номер] - отдать свой голос за n-й вариант.\n");
         sb.append("- покажи голосование - вывести нынешние результаты голосования.\n");
         if(getVkBot().isModerator(m.getSender())) {
-            
+            sb.append("- [M] обнови модуль [модуль] \"[ответ]\" - создать новый модуль/обновить старый, добавив новый возможный ответ.\n");
+            sb.append("- [M] запомни [модуль] \"[обращение]\" - сообщить Милаше, что, когда говорят [обращение], должен выполниться указанным модуль.\n");
         }
         if(getVkBot().isAdministrator(m.getSender())) {
             sb.append("- [A] добавь шаблон для мемов [название]\n");
@@ -46,6 +48,7 @@ public class Help extends BotModule {
             sb.append("- [A] добавь модератора [идентификатор]\n");
             sb.append("- [A] удали модератора [идентификатор]\n");
             sb.append("- [A] засыпай - выключить бота.\n");
+            Logger.log(getVkBot().getClassificationController().getClassifier().toString());
         }
         getMC().send(m.getDialog(), sb.toString());
     }

@@ -24,10 +24,12 @@ public class MemeCreate extends BotModule {
             }
             String template = args[0].toLowerCase();
             if(getVkBot().getMemesTemplatesController().exists(template)) {
-                String upper = args[1].replace("_", " "), lower = "";
-                if(args.length >= 3)
-                    lower = args[2].replace("_", " ");
-                long pid = ImagesWorker.addText(template, upper, lower);
+                String[] texts = parseQuotes(args, 2, 1);
+                if(texts == null) {
+                    getMC().sendAttached(m.getDialog(), "Ты ошибся в синтаксисе команды!", m.getMessageId());
+                    return;
+                }
+                long pid = ImagesWorker.addText(template, texts[0], texts[1]);
                 //Убран массив, так как метод sendWithAttachment всё равно принимает varargs
                 getMC().sendWithAttachment(m.getDialog(), "Держи!", m.getMessageId(), Attachment.PHOTO, getVkBot().getAssistantId(), pid);
             }else
@@ -37,10 +39,12 @@ public class MemeCreate extends BotModule {
                 getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", 0);
                 return;
             }
-            String upper = args[0].replace("_", " "), lower = "";
-            if(args.length >= 2)
-                lower = args[1].replace("_", " ");
-            long pid = ImagesWorker.addTextRemotely(m.getPhotos().iterator().next().getSource(), upper, lower);
+            String[] texts = parseQuotes(args, 2, 0);
+            if(texts == null) {
+                getMC().sendAttached(m.getDialog(), "Ты ошибся в синтаксисе команды!", m.getMessageId());
+                return;
+            }
+            long pid = ImagesWorker.addTextRemotely(m.getPhotos().iterator().next().getSource(), texts[0], texts[1]);
             getMC().sendWithAttachment(m.getDialog(), "Держи!", 0, Attachment.PHOTO, getVkBot().getAssistantId(), pid);
         }
     }
