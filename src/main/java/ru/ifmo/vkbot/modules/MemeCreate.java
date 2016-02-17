@@ -28,7 +28,8 @@ public class MemeCreate extends BotModule {
                 if(args.length >= 3)
                     lower = args[2].replace("_", " ");
                 long pid = ImagesWorker.addText(template, upper, lower);
-                getMC().sendWithAttachment(m.getDialog(), "Держи!", m.getMessageId(), Attachment.PHOTO, new long[]{getVkBot().getAssistantId(), pid});
+                //Убран массив, так как метод sendWithAttachment всё равно принимает varargs
+                getMC().sendWithAttachment(m.getDialog(), "Держи!", m.getMessageId(), Attachment.PHOTO, getVkBot().getAssistantId(), pid);
             }else
                 getMC().sendAttached(m.getDialog(), "Шаблона с указанным названием не существует!", m.getMessageId());
         }else {
@@ -40,7 +41,7 @@ public class MemeCreate extends BotModule {
             if(args.length >= 2)
                 lower = args[1].replace("_", " ");
             long pid = ImagesWorker.addTextRemotely(m.getPhotos().iterator().next().getSource(), upper, lower);
-            getMC().sendWithAttachment(m.getDialog(), "Держи!", 0, Attachment.PHOTO, new long[]{getVkBot().getAssistantId(), pid});
+            getMC().sendWithAttachment(m.getDialog(), "Держи!", 0, Attachment.PHOTO, getVkBot().getAssistantId(), pid);
         }
     }
 
