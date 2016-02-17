@@ -107,7 +107,6 @@ public class ImagesWorker {
         float offsetUpY = image.getHeight() * 0.05f + height;
         float offsetDownY = image.getHeight() * 0.95f;
         printWithOutline(g, textU, (image.getWidth() - width) >> 1, (int) offsetUpY, 3, Color.WHITE, Color.BLACK);
-        g.drawString(textU, (image.getWidth() - width) >> 1, 50);
         size = 60f;
         g.setFont(g.getFont().deriveFont(size));
         while (g.getFontMetrics().stringWidth(textD) >= image.getWidth()) {
