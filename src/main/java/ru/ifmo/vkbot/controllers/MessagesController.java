@@ -15,6 +15,7 @@ import ru.ifmo.vkbot.VkBot;
 import ru.ifmo.vkbot.modules.*;
 import ru.ifmo.vkbot.modules.Bans.*;
 import ru.ifmo.vkbot.modules.MemesManagement.*;
+import ru.ifmo.vkbot.modules.ModersManagement.*;
 import ru.ifmo.vkbot.modules.Secrets.*;
 import ru.ifmo.vkbot.modules.Talk.*;
 import ru.ifmo.vkbot.modules.Votes.*;
@@ -220,8 +221,10 @@ public class MessagesController extends Thread {
                 m.updateMessage(msg);
             }else if(m.getDialog() >= 0 || Talk.talkingWith.contains(m.getSender()))
                 handle = true;
-            if(!handle)
+            if(!handle) {
+                Logger.log("Silently Received (chat %d, sender %d): %s", m.getDialog(), m.getSender(), m.getMessage());
                 return;
+            }
             Logger.log("Received (chat %d, sender %d): %s", m.getDialog(), m.getSender(), m.getMessage());
             Pair<String, String[]> parsed = parse(m.getMessage());
             Object handler = handlers.get(parsed.getA());
@@ -293,6 +296,8 @@ public class MessagesController extends Thread {
             add("засыпай", new Sleep(vkbot));
             add("добавь шаблон для мемов", new MemeTemplateAdd(vkbot));
             add("удали шаблон для мемов", new MemeTemplateRemove(vkbot));
+            add("добавь модератора", new AddModerator(vkbot));
+            add("удали модератора", new RemoveModerator(vkbot));
             
             //SECRETS
             add("скаков", new McSkakov(vkbot));

@@ -10,7 +10,7 @@ import ru.ifmo.vkbot.structures.Message;
 public class SendDirectly extends BotModule {
 
     public SendDirectly(VkBot vkbot) {
-        super(vkbot, Group.ADMINISTRATOR);
+        super(vkbot, Group.ADMINISTRATOR, false);
     }
 
     @Override

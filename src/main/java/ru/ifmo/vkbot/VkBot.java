@@ -154,6 +154,14 @@ public class VkBot {
         return staff.contains(uid) || isAdministrator(uid);
     }
     
+    public List<Long> getAdministrators() {
+        return administration;
+    }
+    
+    public List<Long> getModerators() {
+        return staff;
+    }
+    
     public static VkBot getInstance() {
         return instance;
     }
