@@ -103,7 +103,10 @@ public class ImagesWorker {
             g.setFont(g.getFont().deriveFont(size /= 2));
         }
         int width = g.getFontMetrics().stringWidth(textU);
-        printWithOutline(g, textU, (image.getWidth() - width) >> 1, 50, 3, Color.WHITE, Color.BLACK);
+        int height = g.getFontMetrics().getHeight();
+        float offsetUpY = image.getHeight() * 0.05f + height;
+        float offsetDownY = image.getHeight() * 0.95f;
+        printWithOutline(g, textU, (image.getWidth() - width) >> 1, (int) offsetUpY, 3, Color.WHITE, Color.BLACK);
         g.drawString(textU, (image.getWidth() - width) >> 1, 50);
         size = 60f;
         g.setFont(g.getFont().deriveFont(size));
@@ -112,7 +115,7 @@ public class ImagesWorker {
         }
         width = g.getFontMetrics().stringWidth(textD);
         g.setColor(Color.BLACK);
-        printWithOutline(g, textD, (image.getWidth() - width) >> 1, image.getHeight() - 50, 3, Color.WHITE, Color.BLACK);
+        printWithOutline(g, textD, (image.getWidth() - width) >> 1, (int) offsetDownY, 3, Color.WHITE, Color.BLACK);
         g.dispose();
         File fi = new File(folder, name);
         ImageIO.write(image, ext, fi);
