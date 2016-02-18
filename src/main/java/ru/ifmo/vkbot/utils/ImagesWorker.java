@@ -90,11 +90,7 @@ public class ImagesWorker {
         return 0;
     }
 
-    private static File addTextAndSave(BufferedImage image, String name, String ext, String textU, String textD) throws IOException {
-        textU = textU.toUpperCase();
-        textD = textD.toUpperCase();
-
-        Graphics g = image.getGraphics();
+    private static File addTextAndSave(BufferedImage image, String name, String ext, String textU, String textD) throws IOException {Graphics g = image.getGraphics();
         Font f = new Font("Impact", Font.BOLD, 60);
         g.setFont(f);
         float size = 60f;
