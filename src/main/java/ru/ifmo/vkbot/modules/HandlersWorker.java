@@ -89,8 +89,11 @@ public class HandlersWorker {
             StringBuilder sb = new StringBuilder();
             sb.append("Список активных модулей:\n");
             for(String s : getMC().getLinker().getHandlers())
-                sb.append("- ").append(s).append("\n");
-            getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
+                sb.append(s).append(", ");
+            String s = sb.toString();
+            s = s.substring(0, s.length() - 2);
+            s += ".";
+            getMC().sendAttached(m.getDialog(), s, m.getMessageId());
         }
         
     }
