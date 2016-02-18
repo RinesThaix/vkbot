@@ -54,15 +54,15 @@ public class MessagesController extends Thread {
     public void run() {
         while(enabled) {
             try {
-                if(++counter == 10) {
-                    counter = 0;
-                    vkbot.getBanController().check();
-                    vkbot.getFriendsController().check();
-                }
                 executor.execute(new Runnable() {
 
                     @Override
                     public void run() {
+                        if(++counter == 10) {
+                            counter = 0;
+                            vkbot.getBanController().check();
+                            vkbot.getFriendsController().check();
+                        }
                         Collection<Message> messages = getLastMessages();
                         queue.addAll(messages);
                         for(int i = 0; i < 3 && !queue.isEmpty(); ++i)

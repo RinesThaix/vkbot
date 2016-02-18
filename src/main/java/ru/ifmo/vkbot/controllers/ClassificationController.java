@@ -4,12 +4,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import ru.ifmo.vkbot.VkBot;
 import ru.ifmo.vkbot.utils.Logger;
+import ru.ifmo.vkbot.utils.Pair;
 import weka.classifiers.Classifier;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
@@ -49,11 +52,11 @@ public class ClassificationController implements Serializable {
             study(key, key);
     }
     
-    private final Map<String, String> toRemember = new HashMap();
+    private final List<Pair<String, String>> toRemember = new ArrayList();
     
     public void study(String message, String handler) {
         message = message.toLowerCase();
-        toRemember.put(message, handler);
+        toRemember.add(new Pair(message, handler));
         Instance instance = makeInstance(message, data);
         instance.setClassValue(handler);
         data.add(instance);
@@ -106,8 +109,8 @@ public class ClassificationController implements Serializable {
     public void save() {
         try {
             PrintWriter pw = new PrintWriter(new FileWriter("vkbot.storage"));
-            for(String phrase : toRemember.keySet())
-                pw.println(phrase + "|" + toRemember.get(phrase));
+            for(Pair<String, String> p : toRemember)
+                pw.println(p.getA() + "|" + p.getB());
             pw.close();
         }catch(Exception ex) {
             Logger.warn("Could not save classification data!", ex);
