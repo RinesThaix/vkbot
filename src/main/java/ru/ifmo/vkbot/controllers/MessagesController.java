@@ -228,6 +228,10 @@ public class MessagesController extends Thread {
                 Logger.log("Silently Received (chat %d, sender %d): %s", m.getDialog(), m.getSender(), m.getMessage());
                 return;
             }
+            if(m.getMessage().startsWith("#") && !vkbot.isModerator(m.getSender())) {
+                msgc.sendAttached(m.getDialog(), "Только мои модераторы и администраторы могут напрямую обращаться к текстовым модулям!", m.getMessageId());
+                return;
+            }
             Logger.log("Received (chat %d, sender %d): %s", m.getDialog(), m.getSender(), m.getMessage());
             Pair<String, String[]> parsed = parse(m.getMessage());
             Object handler = handlers.get(parsed.getA());
@@ -292,6 +296,7 @@ public class MessagesController extends Thread {
             //FOR MODERATORS
             add("обнови модуль", new UpdateCustomHandler(vkbot));
             add("запомни", new Study(vkbot));
+            add("список модулей", new ListAllHandlers(vkbot));
             
             //FOR ADMINISTRATORS
             add("забань", new Ban(vkbot));

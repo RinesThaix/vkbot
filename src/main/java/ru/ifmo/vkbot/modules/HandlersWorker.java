@@ -78,4 +78,21 @@ public class HandlersWorker {
         
     }
     
+    public static class ListAllHandlers extends BotModule {
+
+        public ListAllHandlers(VkBot vkbot) {
+            super(vkbot, Group.MODERATOR, false);
+        }
+
+        @Override
+        public void handle(Message m, String[] args) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Список активных модулей:\n");
+            for(String s : getMC().getLinker().getHandlers())
+                sb.append("- ").append(s).append("\n");
+            getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
+        }
+        
+    }
+    
 }
