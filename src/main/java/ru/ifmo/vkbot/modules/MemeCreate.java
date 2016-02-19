@@ -5,6 +5,8 @@ import ru.ifmo.vkbot.controllers.MessagesController.Attachment;
 import ru.ifmo.vkbot.structures.Message;
 import ru.ifmo.vkbot.utils.ImagesWorker;
 
+import java.util.Arrays;
+
 /**
  *
  * @author RinesThaix
@@ -17,6 +19,17 @@ public class MemeCreate extends BotModule {
 
     @Override
     public void handle(Message m, String[] args) {
+        // говнокод
+        boolean caps = "capsoff".equals(args[args.length - 1].toLowerCase()) || "некапс".equals(args[args.length - 1].toLowerCase());
+        if(caps) {
+            args = Arrays.copyOf(args, args.length - 1); // Мне лень разбираться в коде дальше, поэтому я просто оставлю это так
+        } else {
+            if(args.length >= 2) {                       // Вынес апперкейс сюда
+                args[args.length - 1] = args[args.length - 1].toUpperCase();
+                args[args.length - 2] = args[args.length - 2].toUpperCase();
+            }
+        }
+        // /говнокод
         if(m.getPhotos().isEmpty()) {
             if(args.length < 2) {
                 getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", m.getMessageId());
