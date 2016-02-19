@@ -308,6 +308,7 @@ public class MessagesController extends Thread {
             add("удали шаблон для мемов", new MemeTemplateRemove(vkbot));
             add("добавь модератора", new AddModerator(vkbot));
             add("удали модератора", new RemoveModerator(vkbot));
+            add("перезагрузись", new Reboot(vkbot));
             
             //SECRETS
             add("скаков", new McSkakov(vkbot));

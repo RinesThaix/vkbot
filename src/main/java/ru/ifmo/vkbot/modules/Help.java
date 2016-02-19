@@ -48,6 +48,7 @@ public class Help extends BotModule {
             sb.append("- [A] разбань [идентификатор]\n");
             sb.append("- [A] добавь модератора [идентификатор]\n");
             sb.append("- [A] удали модератора [идентификатор]\n");
+            sb.append("- [A] перезагрузись - перезагрузить бота.\n");
             sb.append("- [A] засыпай - выключить бота.\n");
             Logger.log(getVkBot().getClassificationController().getClassifier().toString());
         }

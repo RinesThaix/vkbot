@@ -113,6 +113,12 @@ public class VkBot {
         System.exit(0);
     }
     
+    public void reboot() {
+        Logger.log("Rebooting VkBot v%s..", version);
+        this.cc.save();
+        this.cc = ClassificationController.load();
+    }
+    
     public String getAccessToken() {
         return access_token;
     }
