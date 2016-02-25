@@ -1,7 +1,6 @@
 package ru.ifmo.vkbot.utils;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -15,7 +14,21 @@ import ru.ifmo.vkbot.VkBot;
  *
  * @author RinesThaix
  */
+@SuppressWarnings("deprecation")
 public class PostExecutor {
+    
+    @Deprecated
+    public static String executeGet(String urlGet) {
+        try {
+            URL url = new URL(urlGet);
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                return reader.readLine();
+            }
+        }catch(Exception ex) {
+            Logger.warn("Could not execute get-query!", ex);
+            return null;
+        }
+    }
 
     public static InputStream execute(String urlGet) {
         try {
@@ -36,7 +49,7 @@ public class PostExecutor {
             }
             return http.getInputStream();
         }catch(Exception ex) {
-            Logger.warn("Could not execute query to VkAPI!", ex);
+            Logger.warn("Could not execute post-query!", ex);
             return null;
         }
     }
@@ -48,7 +61,7 @@ public class PostExecutor {
                 Logger.warn("Received unexpectable answer from " + urlGet);
             return line;
         }catch(Exception ex) {
-            Logger.warn("Could not execute query to VkAPI!", ex);
+            Logger.warn("Could not execute and get post-query!", ex);
             return null;
         }
     }

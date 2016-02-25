@@ -16,9 +16,11 @@ public class Infa extends BotModule {
 
     @Override
     public void handle(Message m, String[] args) {
-        String s = toString(args);
-        if(s.isEmpty())
+        if(args.length == 0) {
+            getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", m.getMessageId());
             return;
+        }
+        String s = toString(args);
         Random r = new Random(s.toLowerCase().hashCode() + m.getSender());
         int prob = r.nextInt(101);
         getMC().sendAttached(m.getDialog(), "Вероятность этого -- " + prob + "%", m.getMessageId());

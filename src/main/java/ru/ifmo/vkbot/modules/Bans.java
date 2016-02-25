@@ -64,5 +64,27 @@ public class Bans {
         }
         
     }
+
+    public static class BanList extends BotModule {
+
+        public BanList(VkBot vkbot) {
+            super(vkbot, Group.ADMINISTRATOR, false);
+        }
+
+        @Override
+        public void handle(Message m, String[] args) {
+            StringBuilder sb = new StringBuilder();
+            for(long uid : getVkBot().getBanController().getBans())
+                sb.append(uid).append(", ");
+            String s = sb.toString();
+            if(s.isEmpty())
+                getMC().sendAttached(m.getDialog(), "Список банов пуст.", m.getMessageId());
+            else {
+                s = s.substring(0, s.length() - 2);
+                getMC().sendAttached(m.getDialog(), "Список банов:\n" + s, m.getMessageId());
+            }
+        }
+        
+    }
     
 }

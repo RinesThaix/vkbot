@@ -146,9 +146,9 @@ public class MessagesController extends Thread {
         }
         Logger.log("Sent (to %d): %s", dialog, message);
         if(dialog > 0)
-            PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", message);
+            PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", PostExecutor.encode(message));
         else
-            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", message);
+            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", PostExecutor.encode(message));
     }
     
     public void sendAttached(long dialog, String message, long mid) {
@@ -158,9 +158,9 @@ public class MessagesController extends Thread {
         }
         Logger.log("Sent (to %d): %s", dialog, message);
         if(dialog > 0)
-            PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", message, "forward_messages", mid);
+            PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", PostExecutor.encode(message), "forward_messages", mid);
         else
-            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", message, "forward_messages", mid);
+            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", PostExecutor.encode(message), "forward_messages", mid);
     }
     
     public void sendWithAttachment(long dialog, String message, long mid, Attachment a, long... aids) {
@@ -178,13 +178,13 @@ public class MessagesController extends Thread {
         }
         if(dialog > 0)
             if(mid != 0)
-                PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", message, "forward_messages", mid, "attachment", sb.toString());
+                PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", PostExecutor.encode(message), "forward_messages", mid, "attachment", sb.toString());
             else
-                PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", message, "attachment", sb.toString());
+                PostExecutor.buildAndGet("messages.send", "user_id", dialog, "message", PostExecutor.encode(message), "attachment", sb.toString());
         else if(mid != 0)
-            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", message, "forward_messages", mid, "attachment", sb.toString());
+            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", PostExecutor.encode(message), "forward_messages", mid, "attachment", sb.toString());
         else
-            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", message, "attachment", sb.toString());
+            PostExecutor.buildAndGet("messages.send", "chat_id", -dialog, "message", PostExecutor.encode(message), "attachment", sb.toString());
     }
     
     public static enum Attachment {
@@ -292,6 +292,7 @@ public class MessagesController extends Thread {
             add("покажи голосование", new VoteShow(vkbot));
             add("создай мем", new MemeCreate(vkbot));
             add("шаблоны для мемов", new MemeTemplateList(vkbot));
+            add("найди", new Find(vkbot));
             
             //FOR MODERATORS
             add("обнови модуль", new UpdateCustomHandler(vkbot));
@@ -301,6 +302,7 @@ public class MessagesController extends Thread {
             //FOR ADMINISTRATORS
             add("забань", new Ban(vkbot));
             add("разбань", new Unban(vkbot));
+            add("баны", new BanList(vkbot));
             add("добавь меня в чат", new AddToChat(vkbot));
             add("отправь", new SendDirectly(vkbot));
             add("засыпай", new Sleep(vkbot));

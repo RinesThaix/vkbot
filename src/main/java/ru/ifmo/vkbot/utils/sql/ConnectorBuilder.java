@@ -1,5 +1,6 @@
 package ru.ifmo.vkbot.utils.sql;
 
+@SuppressWarnings("deprecation")
 public class ConnectorBuilder {
 
     private Connector connector;

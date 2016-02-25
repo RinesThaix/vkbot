@@ -55,12 +55,16 @@ public class ClassificationController implements Serializable {
     private final List<Pair<String, String>> toRemember = new ArrayList();
     
     public void study(String message, String handler) {
-        message = message.toLowerCase();
-        toRemember.add(new Pair(message, handler));
-        Instance instance = makeInstance(message, data);
-        instance.setClassValue(handler);
-        data.add(instance);
-        isUpToDate = false;
+        try {
+            message = message.toLowerCase();
+            toRemember.add(new Pair(message, handler));
+            Instance instance = makeInstance(message, data);
+            instance.setClassValue(handler);
+            data.add(instance);
+            isUpToDate = false;
+        }catch(Exception ex) {
+            Logger.warn("Could not study for \"" + handler + "\"!", ex);
+        }
     }
     
     public String classify(String message) {

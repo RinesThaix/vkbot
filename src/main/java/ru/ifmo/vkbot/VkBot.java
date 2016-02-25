@@ -25,7 +25,7 @@ import ru.ifmo.vkbot.utils.sql.TablesLoader;
  */
 public class VkBot {
 
-    private final static String version = "1.1";
+    private final static String version = "1.1.2";
     private final static JSONParser parser = new JSONParser();
     
     private static VkBot instance;
@@ -105,6 +105,7 @@ public class VkBot {
     public void disable() {
         Logger.log("Disabling VkBot v%s..", version);
         this.msgc.disable();
+        this.banc.save();
         this.cc.save();
         Connector.shutdownAll();
         try {

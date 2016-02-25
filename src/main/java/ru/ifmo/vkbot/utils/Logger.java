@@ -6,6 +6,7 @@ import java.util.Date;
  *
  * @author RinesThaix
  */
+@SuppressWarnings("deprecation")
 public class Logger {
 
     private static void write(String s) {
@@ -31,6 +32,10 @@ public class Logger {
                 .append(getTime())
                 .append(": ")
                 .append(s).toString());
+    }
+    
+    public static void debug(String s) {
+        log("[Debug] " + s);
     }
 
     public static void warn(String s) {

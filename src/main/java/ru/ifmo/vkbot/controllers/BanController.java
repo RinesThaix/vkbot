@@ -1,6 +1,7 @@
 package ru.ifmo.vkbot.controllers;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.json.simple.JSONArray;
@@ -19,31 +20,40 @@ public class BanController {
     
     private Configuration config;
     
-    public void load() {
+    public BanController() {
+        load();
+    }
+    
+    private void load() {
         try {
             Logger.log("Loading BanController..");
             config = new Configuration("bans");
             String banned;
             if((banned = config.getString("banned", null)) != null) {
                 String[] spl = banned.split(" ");
-                for(String s : spl)
+                for(String s : spl) {
                     BanController.banned.add(Long.parseLong(s));
+                }
             }
         }catch(IOException ex) {
             Logger.warn("Could not load BanController!");
         }
     }
     
-    public void save() throws IOException {
-        if(banned.isEmpty())
-            return;
-        StringBuilder sb = new StringBuilder();
-        for(Long l : banned)
-            sb.append(l).append(" ");
-        String s = sb.toString();
-        s = s.substring(0, s.length() - 1);
-        config.setString("banned", s);
-        config.save();
+    public void save() {
+        try {
+            if(banned.isEmpty())
+                return;
+            StringBuilder sb = new StringBuilder();
+            for(Long l : banned)
+                sb.append(l).append(" ");
+            String s = sb.toString();
+            s = s.substring(0, s.length() - 1);
+            config.setString("banned", s);
+            config.save();
+        }catch(IOException ex) {
+            Logger.warn("Could not save BanController!");
+        }
     }
     
     public void ban(long uid) {
@@ -56,6 +66,10 @@ public class BanController {
     
     public boolean isBanned(long uid) {
         return banned.contains(uid);
+    }
+    
+    public Collection<Long> getBans() {
+        return banned;
     }
 
     public void check() {

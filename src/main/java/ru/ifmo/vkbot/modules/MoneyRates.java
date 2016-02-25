@@ -17,6 +17,10 @@ public class MoneyRates extends BotModule {
 
     @Override
     public void handle(Message m, String[] args) {
+        if(args.length == 0) {
+            getMC().sendAttached(m.getDialog(), "Недостаточно аргументов!", m.getMessageId());
+            return;
+        }
         String symbol;
         switch(args[0].toLowerCase()) {
             case "доллара":
