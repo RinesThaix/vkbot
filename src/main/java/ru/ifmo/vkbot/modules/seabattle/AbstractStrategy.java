@@ -28,12 +28,7 @@ public abstract class AbstractStrategy {
     private int lastX = -1, lastY = -1; //наш последний ход, ждем ответа игрока
     protected Outcome lastOutcome = Outcome.NOTHING;
     
-    private final long dialog;
-    private long previousMid;
-    
-    public AbstractStrategy(long dialog, long mid) {
-        this.dialog = dialog;
-        this.previousMid = mid;
+    public AbstractStrategy() {
         placeShips();
     }
     

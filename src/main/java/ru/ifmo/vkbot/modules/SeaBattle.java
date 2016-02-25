@@ -82,7 +82,7 @@ public class SeaBattle extends BotModule {
                 }
         }else {
             AbstractStrategy strategy;
-            strategy = new RepeatStrategy(m.getDialog(), m.getMessageId());
+            strategy = new RepeatStrategy();
             try {
                 strategy.validate();
                 games.put(uid, strategy);

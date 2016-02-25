@@ -8,10 +8,6 @@ import ru.ifmo.vkbot.utils.Pair;
  * @author RinesThaix
  */
 public class RepeatStrategy extends AbstractStrategy {
-    
-    public RepeatStrategy(long dialog, long mid) {
-        super(dialog, mid);
-    }
 
     @Override
     protected void placeShips() {
