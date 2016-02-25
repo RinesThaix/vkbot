@@ -37,6 +37,10 @@ public class Logger {
     public static void debug(String s) {
         log("[Debug] " + s);
     }
+    
+    public static void debug(String s, Object... args) {
+        debug(String.format(s, args));
+    }
 
     public static void warn(String s) {
         warn(s, null);

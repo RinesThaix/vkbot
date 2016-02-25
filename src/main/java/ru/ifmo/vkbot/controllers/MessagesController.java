@@ -293,6 +293,7 @@ public class MessagesController extends Thread {
             add("создай мем", new MemeCreate(vkbot));
             add("шаблоны для мемов", new MemeTemplateList(vkbot));
             add("найди", new Find(vkbot));
+            add("мб", new SeaBattle(vkbot));
             
             //FOR MODERATORS
             add("обнови модуль", new UpdateCustomHandler(vkbot));

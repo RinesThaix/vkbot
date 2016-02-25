@@ -25,7 +25,7 @@ import ru.ifmo.vkbot.utils.sql.TablesLoader;
  */
 public class VkBot {
 
-    private final static String version = "1.1.2";
+    private final static String version = "1.1.3";
     private final static JSONParser parser = new JSONParser();
     
     private static VkBot instance;
