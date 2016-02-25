@@ -35,6 +35,10 @@ public class Find extends BotModule {
             StringBuilder sb = new StringBuilder();
             JSONObject json = (JSONObject) VkBot.getParser().parse(answer);
             json = (JSONObject) json.get("responseData");
+            if(json == null) {
+                getMC().sendAttached(m.getDialog(), "Некорректный запрос.", m.getMessageId());
+                return;
+            }
             JSONArray array = (JSONArray) json.get("results");
             sb.append("Вот, что мне удалось найти:\n");
             for(int i = 0; i < Math.min(3, array.size()); ++i) {
