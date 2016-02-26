@@ -31,9 +31,10 @@ public class BanController {
             String banned;
             if((banned = config.getString("banned", null)) != null) {
                 String[] spl = banned.split(" ");
-                for(String s : spl) {
+                if(spl.length == 1 && spl[0].equals(""))
+                    return;
+                for(String s : spl)
                     BanController.banned.add(Long.parseLong(s));
-                }
             }
         }catch(IOException ex) {
             Logger.warn("Could not load BanController!");
@@ -46,7 +47,8 @@ public class BanController {
             for(Long l : banned)
                 sb.append(l).append(" ");
             String s = sb.toString();
-            s = s.substring(0, s.length() - 1);
+            if(!s.isEmpty())
+                s = s.substring(0, s.length() - 1);
             config.setString("banned", s);
             config.save();
         }catch(IOException ex) {
