@@ -25,6 +25,8 @@ public class NoviceStrategy extends DefaultStrategy {
 
     @Override
     protected Pair<Integer, Integer> randomMove() throws FoulPlayException {
+        if(rand.nextInt(4) == 0)
+            return super.randomMove();
         if(cells.isEmpty()) {
             cells.addAll(preCells);
             for(int i = 0; i < 10; ++i) {

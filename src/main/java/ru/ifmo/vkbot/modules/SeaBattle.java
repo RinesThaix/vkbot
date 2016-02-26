@@ -37,9 +37,11 @@ public class SeaBattle extends BotModule {
             sb.append("- мб сдаюсь - досрочно завершить игру.\n");
             sb.append("- мб Г8 - походить в клетку Г8.\n");
             sb.append("- мб ранила - сказать Милаше, что она своим последним ходом ранила ваш корабль.\n");
+            sb.append("- мб поле - попросить Милашу вывести пустое поле.\n");
             if(getVkBot().isAdministrator(uid)) {
                 sb.append("- [A] мб принт - попросить Милашу вывести свое поле и информацию о вашем поле.\n");
             }
+            sb.append("Легенда карты: Ⓧ - убит, ⓧ - ранен, ⓞ - пусто, ⑔ - неизвестно.\n");
             getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
             return;
         }
@@ -50,6 +52,9 @@ public class SeaBattle extends BotModule {
                 for(String s : strategies.keySet())
                     sb.append("- ").append(s).append("\n");
                 getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
+                return;
+            }case "поле": {
+                getMC().sendAttached(m.getDialog(), "Пожалуйста:\n" + AbstractStrategy.getMatrix(new int[10][10]), m.getMessageId());
                 return;
             }
         }
@@ -65,7 +70,7 @@ public class SeaBattle extends BotModule {
                         getMC().sendAttached(m.getDialog(), "Может, еще чего?", m.getMessageId());
                         return;
                     }
-                    String s1 = game.getMatrix(true), s2 = game.getMatrix(false);
+                    String s1 = game.getBotViewMatrix(true), s2 = game.getBotViewMatrix(false);
                     getMC().sendAttached(m.getDialog(), "Пожалуйста:\n" + s1 + "\n" + s2, m.getMessageId());
                     return;
                 }
