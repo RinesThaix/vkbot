@@ -149,12 +149,52 @@ public abstract class AbstractStrategy {
                 return lastOutcome = Outcome.NOTHING;
             case "ранила":
                 players[lastX][lastY] = WOUNDED_SHIP;
+                int x1 = lastX, x2 = lastX, y1 = lastY, y2 = lastY;
+                for(int dx = x1 + 1;; ++dx) {
+                    Integer v = checkAndGet(players, dx, lastY);
+                    if(isNothing(v)) {
+                        x2 = dx - 1;
+                        break;
+                    }
+                    if(v != WOUNDED_SHIP)
+                        throw new FoulPlayException();
+                }
+                for(int dx = x1 - 1;; --dx) {
+                    Integer v = checkAndGet(players, dx, lastY);
+                    if(isNothing(v)) {
+                        x1 = dx + 1;
+                        break;
+                    }
+                    if(v != WOUNDED_SHIP)
+                        throw new FoulPlayException();
+                }
+                for(int dy = y1 + 1;; ++dy) {
+                    Integer v = checkAndGet(players, lastX, dy);
+                    if(isNothing(v)) {
+                        y2 = dy - 1;
+                        break;
+                    }
+                    if(v != WOUNDED_SHIP)
+                        throw new FoulPlayException();
+                }
+                for(int dy = y1 - 1;; --dy) {
+                    Integer v = checkAndGet(players, lastX, dy);
+                    if(isNothing(v)) {
+                        y1 = dy + 1;
+                        break;
+                    }
+                    if(v != WOUNDED_SHIP)
+                        throw new FoulPlayException();
+                }
+                if(x1 != x2 && y1 != y1 || x2 - x1 + 1 > 4 || y2 - y1 + 1 > 4)
+                    throw new FoulPlayException();
                 return lastOutcome = Outcome.WOUNDED;
             case "убила":
                 if(--shipCellsLeft_player == 0)
                     return lastOutcome = Outcome.WIN;
                 int x = lastX, y = lastY;
-                int x1 = x, x2 = x, y1 = y, y2 = y;
+                x1 = x; x2 = x;
+                y1 = y; y2 = y;
                 for(int dx = x1 + 1;; ++dx) {
                     Integer v = checkAndGet(players, dx, y);
                     if(isNothing(v)) {

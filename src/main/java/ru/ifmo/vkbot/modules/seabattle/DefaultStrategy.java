@@ -57,12 +57,14 @@ public class DefaultStrategy extends AbstractStrategy {
         }
     }
     
-    protected Pair<Integer, Integer> randomMove() {
-        int x = rand.nextInt(10), y = rand.nextInt(10);
-        while(players[x][y] != NOT_CHECKED) {
+    protected Pair<Integer, Integer> randomMove() throws FoulPlayException {
+        int x = rand.nextInt(10), y = rand.nextInt(10), i = 0;
+        while(players[x][y] != NOT_CHECKED && i < 10000) {
             x = rand.nextInt(10);
             y = rand.nextInt(10);
         }
+        if(i == 10000)
+            throw new FoulPlayException();
         return new Pair(x, y);
     }
     
@@ -111,7 +113,7 @@ public class DefaultStrategy extends AbstractStrategy {
                         return new Pair(x, py);
                 throw new FoulPlayException();
             }
-            int x, y;
+            int x, y, i = 0;
             do {
                 switch(rand.nextInt(4)) {
                     case 0: x = px - 1; y = py; break;
@@ -119,6 +121,8 @@ public class DefaultStrategy extends AbstractStrategy {
                     case 2: x = px; y = py - 1; break;
                     default: x = px; y = py + 1; break;
                 }
+                if(++i == 1000)
+                    throw new FoulPlayException();
             }while(x < 0 || x >= 10 || y < 0 || y >= 10 || players[x][y] != NOT_CHECKED);
             return new Pair(x, y);
         }else
