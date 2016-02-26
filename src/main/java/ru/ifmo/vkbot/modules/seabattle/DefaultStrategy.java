@@ -59,11 +59,11 @@ public class DefaultStrategy extends AbstractStrategy {
     
     protected Pair<Integer, Integer> randomMove() throws FoulPlayException {
         int x = rand.nextInt(10), y = rand.nextInt(10), i = 0;
-        while(players[x][y] != NOT_CHECKED && ++i < 10000) {
+        while(players[x][y] != NOT_CHECKED && ++i < 100000) {
             x = rand.nextInt(10);
             y = rand.nextInt(10);
         }
-        if(i == 10000)
+        if(i == 100000)
             throw new FoulPlayException();
         return new Pair(x, y);
     }

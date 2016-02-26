@@ -23,7 +23,11 @@ public abstract class AbstractStrategy {
     private int
             shipCellsLeft_bot = 20,
             shipCellsLeft_player = 20,
-            cellsLeft_player = 100;
+            cellsLeft_player = 100,
+            four_player = 1,
+            three_player = 2,
+            two_player = 3,
+            one_player = 4;
     
     private int lastX = -1, lastY = -1; //наш последний ход, ждем ответа игрока
     protected Outcome lastOutcome = Outcome.NOTHING;
@@ -148,6 +152,7 @@ public abstract class AbstractStrategy {
                 players[lastX][lastY] = SURELY_EMTPY;
                 return lastOutcome = Outcome.NOTHING;
             case "ранила":
+                --shipCellsLeft_player;
                 players[lastX][lastY] = WOUNDED_SHIP;
                 int x1 = lastX, x2 = lastX, y1 = lastY, y2 = lastY;
                 for(int dx = x1 + 1;; ++dx) {
@@ -239,6 +244,18 @@ public abstract class AbstractStrategy {
                     else
                         throw new FoulPlayException();
                 }
+                if(x1 != x2 && y1 != y2)
+                    throw new FoulPlayException();
+                int size = Math.max(x2 - x1, y2 - y1) + 1;
+                switch(size) {
+                    case 4: --four_player; break;
+                    case 3: --three_player; break;
+                    case 2: --two_player; break;
+                    case 1: --one_player; break;
+                    default: throw new FoulPlayException();
+                }
+                if(four_player < 0 || three_player < 0 || two_player < 0 || one_player < 0)
+                    throw new FoulPlayException();
                 for(x = x1 - 1; x <= x2 + 1; ++x)
                     for(y = y1 - 1; y <= y2 + 1; ++y) {
                         if(x >= 0 && x < 10 && y >= 0 && y < 10 && players[x][y] == NOT_CHECKED)
