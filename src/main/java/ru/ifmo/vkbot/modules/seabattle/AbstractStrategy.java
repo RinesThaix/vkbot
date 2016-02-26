@@ -12,7 +12,7 @@ public abstract class AbstractStrategy {
             bot = new int[10][10],
             players = new int[10][10];
     
-    protected final int
+    protected final static int
             NOT_CHECKED = 0, //неизвестно, что здесь
             SURELY_EMTPY = 1, //мы сюда походили, и здесь пусто
             EMPTY = 2, //мы сюда не ходили, но здесь должно быть пусто, т.к. где-то рядом корабль
@@ -28,24 +28,21 @@ public abstract class AbstractStrategy {
     private int lastX = -1, lastY = -1; //наш последний ход, ждем ответа игрока
     protected Outcome lastOutcome = Outcome.NOTHING;
     
-    public AbstractStrategy() {
-        placeShips();
-    }
-    
     public void validate() throws NotValidStrategyException {
+        placeShips();
         if(!checkShips())
-            throw new NotValidStrategyException();
+            throw new NotValidStrategyException(bot);
     }
     
     public final Outcome playerMove(String move) throws NotValidMoveException {
         Pair<Integer, Integer> pa = parseMove(move);
         if(pa == null)
-            throw new NotValidMoveException(false);
+            throw new NotValidMoveException(-1, -1, false);
         int x = pa.getA(), y = pa.getB();
         if(!exists(x, y))
-            throw new NotValidMoveException(false);
+            throw new NotValidMoveException(x, y, false);
         if(bot[x][y] != NOT_CHECKED && bot[x][y] != PLACED_SHIP)
-            throw new NotValidMoveException(true);
+            throw new NotValidMoveException(x, y, true);
         Outcome o = playerMove0(x, y);
         afterPlayerMove(x, y, o);
         return o;
@@ -115,18 +112,32 @@ public abstract class AbstractStrategy {
         return lastOutcome == Outcome.PENDING;
     }
     
+    public String getMatrix(boolean bot) {
+        int[][] matrix = bot ? this.bot : this.players;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < 10; ++i) {
+            for(int j = 0; j < 10; ++j)
+                sb.append(matrix[j][i] == PLACED_SHIP ? "X" : matrix[j][i] == WOUNDED_SHIP ? "x" :
+                        matrix[j][i] == NOT_CHECKED ? "?" : matrix[j][i] == SURELY_EMTPY ? "o" : ".")
+                        .append(" ");
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+    
     public final String botMove() throws NotValidMoveException, FoulPlayException {
         Outcome previous = lastOutcome;
         lastOutcome = Outcome.PENDING;
         Pair<Integer, Integer> move = doMove(lastX, lastY, previous);
         int x = move.getA(), y = move.getB();
         if(!exists(x, y))
-            throw new NotValidMoveException(false);
+            throw new NotValidMoveException(x, y, false);
         if(players[x][y] != NOT_CHECKED && players[x][y] != EMPTY)
-            throw new NotValidMoveException(true);
+            throw new NotValidMoveException(x, y, true);
         lastX = x;
         lastY = y;
-        return (char) (x + 'А') + "" + (y + 1);
+        char c = x == 10 ? 'К' : (char) (x + 'А');
+        return c + "" + (y + 1);
     }
     
     public final Outcome updateLastMove(String outcome) throws UnknownOutcomeException, FoulPlayException {
@@ -151,7 +162,7 @@ public abstract class AbstractStrategy {
                         break;
                     }
                     if(v == WOUNDED_SHIP)
-                        checked[dx][y] = KILLED_SHIP;
+                        players[dx][y] = KILLED_SHIP;
                     else
                         throw new FoulPlayException();
                 }
@@ -162,7 +173,7 @@ public abstract class AbstractStrategy {
                         break;
                     }
                     if(v == WOUNDED_SHIP)
-                        checked[dx][y] = KILLED_SHIP;
+                        players[dx][y] = KILLED_SHIP;
                     else
                         throw new FoulPlayException();
                 }
@@ -173,7 +184,7 @@ public abstract class AbstractStrategy {
                         break;
                     }
                     if(v == WOUNDED_SHIP)
-                        checked[x][dy] = KILLED_SHIP;
+                        players[x][dy] = KILLED_SHIP;
                     else
                         throw new FoulPlayException();
                 }
@@ -184,28 +195,16 @@ public abstract class AbstractStrategy {
                         break;
                     }
                     if(v == WOUNDED_SHIP)
-                        checked[x][dy] = KILLED_SHIP;
+                        players[x][dy] = KILLED_SHIP;
                     else
                         throw new FoulPlayException();
                 }
-                if(x1 == x2) {
-                    for(y = y1; y <= y2; ++y) {
-                        int left = x1 - 1, right = x1 + 1;
-                        if(left >= 0 && players[left][y] == NOT_CHECKED)
-                            players[left][y] = EMPTY;
-                        if(right < 10 && players[right][y] == NOT_CHECKED)
-                            players[right][y] = EMPTY;
+                for(x = x1 - 1; x <= x2 + 1; ++x)
+                    for(y = y1 - 1; y <= y2 + 1; ++y) {
+                        if(x >= 0 && x < 10 && y >= 0 && y < 10 && players[x][y] == NOT_CHECKED)
+                            players[x][y] = EMPTY;
                     }
-                }else if(y1 == y2) {
-                    for(x = x1; x <= x2; ++x) {
-                        int downer = y1 - 1, upper = y1 + 1;
-                        if(downer >= 0 && players[x][downer] == NOT_CHECKED)
-                            players[x][downer] = EMPTY;
-                        if(upper < 10 && players[x][upper] == NOT_CHECKED)
-                            players[x][upper] = EMPTY;
-                    }
-                }
-                checked[x][y] = KILLED_SHIP;
+                players[lastX][lastY] = KILLED_SHIP;
                 return lastOutcome = Outcome.KILLED;
             default:
                 throw new UnknownOutcomeException();
@@ -227,9 +226,11 @@ public abstract class AbstractStrategy {
             char f = move.charAt(0);
             if(f >= 'a' && f <= 'j')
                 f -= 'a';
-            else if(f >= 'а' && f <= 'к')
+            else if(f >= 'а' && f <= 'к') {
+                if(f == 'к')
+                    f = 'й';
                 f -= 'а';
-            else
+            }else
                 return null;
             if(move.length() == 3) {
                 String sub = move.substring(1, 3);
@@ -287,37 +288,27 @@ public abstract class AbstractStrategy {
         return value == null || value == SURELY_EMTPY || value == EMPTY;
     }
     
+    protected boolean isWounded(Integer value) {
+        return value != null && value == WOUNDED_SHIP;
+    }
+    
+    protected boolean isNotChecked(Integer value) {
+        return value != null && value == NOT_CHECKED;
+    }
+    
     private Integer checkAndGet(int x, int y) {
         return checkAndGet(checked, x, y);
     }
     
-    private boolean checkFreeSpot(int x1, int y1, int x2, int y2) {
-        if(x1 == x2) {
-            if(y1 > y2) {
-                int t = y1;
-                y1 = y2;
-                y2 = t;
-            }
-            for(int t = y1; t <= y2; ++t) {
-                Integer left = checkAndGet(x1 - 1, t), right = checkAndGet(x1 + 1, t);
-                if(!isNothing(left) || !isNothing(right))
+    public boolean checkFreeSpot(int[][] matrix, int x1, int y1, int x2, int y2) {
+        for(int x = x1 - 1; x <= x2 + 1; ++x)
+            for(int y = y1 - 1; y <= y2 + 1; ++y) {
+                if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+                    continue;
+                Integer current = checkAndGet(matrix, x, y);
+                if(!isNothing(current))
                     return false;
             }
-        }else {
-            if(y1 == y2) {
-                if(x1 > x2) {
-                    int t = x1;
-                    x1 = x2;
-                    x2 = t;
-                }
-                for(int t = x1; t <= x2; ++t) {
-                    Integer upper = checkAndGet(t, y1 + 1), downer = checkAndGet(t, y1 - 1);
-                    if(!isNothing(upper) || !isNothing(downer))
-                        return false;
-                }
-            }else
-                return false;
-        }
         return true;
     }
     
@@ -352,7 +343,7 @@ public abstract class AbstractStrategy {
                     }
                     checked[x][endY] = KILLED_SHIP;
                 }
-                if(!checkFreeSpot(x, y, x, endY))
+                if(!checkFreeSpot(checked, x, y, x, endY))
                     one = -1;
                 decreaseShipsAmount(endY - y + 1);
             }
@@ -366,7 +357,7 @@ public abstract class AbstractStrategy {
                     }
                     checked[endX][y] = KILLED_SHIP;
                 }
-                if(!checkFreeSpot(x, y, endX, y))
+                if(!checkFreeSpot(checked, x, y, endX, y))
                     one = -1;
                 decreaseShipsAmount(endX - x + 1);
             }

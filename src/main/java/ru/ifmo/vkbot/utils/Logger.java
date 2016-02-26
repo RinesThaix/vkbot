@@ -55,16 +55,13 @@ public class Logger {
                 .append(getTime())
                 .append(": ")
                 .append(s).toString());
-        sb = new StringBuilder();
-        sb.append("[")
-                .append(Thread.currentThread().getName())
-                .append("/EXCEPTION] ");
-        String prefix = sb.toString();
-        if (ex != null) {
-            write(prefix + "Cause: " + ex.getMessage());
-//            for (StackTraceElement element : ex.getStackTrace()) {
-//                write(prefix + element.toString());
-//            }
+        if(ex != null) {
+            sb = new StringBuilder();
+            sb.append("[")
+                    .append(Thread.currentThread().getName())
+                    .append("/EXCEPTION] ");
+            String prefix = sb.toString();
+            write(prefix);
             ex.printStackTrace();
         }
     }

@@ -15,6 +15,12 @@ import ru.ifmo.vkbot.utils.Logger;
 public class SeaBattle extends BotModule {
     
     private final static Map<Long, AbstractStrategy> games = new HashMap();
+    private final static Map<String, Class<? extends AbstractStrategy>> strategies = new HashMap();
+    
+    static {
+        strategies.put("обычная", DefaultStrategy.class);
+        strategies.put("новичок", NoviceStrategy.class);
+    }
 
     public SeaBattle(VkBot vkbot) {
         super(vkbot);
@@ -24,11 +30,46 @@ public class SeaBattle extends BotModule {
     public void handle(Message m, String[] args) {
         long uid = m.getSender();
         if(args.length == 0 || args[0].equalsIgnoreCase("помощь")) {
-            getMC().sendAttached(m.getDialog(), "Здесь должна быть помощь", m.getMessageId());
+            StringBuilder sb = new StringBuilder();
+            sb.append("Помощь по морскому бою:\n");
+            sb.append("- мб стратегии - выводит все доступные стратегии.\n");
+            sb.append("- мб [название стратегии] - начать игру против выбранной стратегии.\n");
+            sb.append("- мб сдаюсь - досрочно завершить игру.\n");
+            sb.append("- мб Г8 - походить в клетку Г8.\n");
+            sb.append("- мб ранила - сказать Милаше, что она своим последним ходом ранила ваш корабль.\n");
+            if(getVkBot().isAdministrator(uid)) {
+                sb.append("- [A] мб принт - попросить Милашу вывести свое поле и информацию о вашем поле.\n");
+            }
+            getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
             return;
+        }
+        switch(args[0].toLowerCase()) {
+            case "стратегии": {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Стратегии морского боя:\n");
+                for(String s : strategies.keySet())
+                    sb.append("- ").append(s).append("\n");
+                getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
+                return;
+            }
         }
         if(games.containsKey(uid)) {
             AbstractStrategy game = games.get(uid);
+            switch(args[0].toLowerCase()) {
+                case "сдаюсь": {
+                    games.remove(uid);
+                    getMC().sendAttached(m.getDialog(), "Это было просто!", m.getMessageId());
+                    return;
+                }case "принт": {
+                    if(!getVkBot().isAdministrator(uid)) {
+                        getMC().sendAttached(m.getDialog(), "Может, еще чего?", m.getMessageId());
+                        return;
+                    }
+                    String s1 = game.getMatrix(true), s2 = game.getMatrix(false);
+                    getMC().sendAttached(m.getDialog(), "Пожалуйста:\n" + s1 + "\n" + s2, m.getMessageId());
+                    return;
+                }
+            }
             if(game.isPending())
                 try {
                     Outcome o = game.updateLastMove(args[0]);
@@ -81,8 +122,19 @@ public class SeaBattle extends BotModule {
                         getMC().sendAttached(m.getDialog(), "Либо ты вышел за пределы поля, либо написал какую-то дичь.", m.getMessageId());
                 }
         }else {
+            Class<? extends AbstractStrategy> clazz = strategies.get(args[0].toLowerCase());
+            if(clazz == null) {
+                getMC().sendAttached(m.getDialog(), "Неизвестная стратегия!", m.getMessageId());
+                return;
+            }
             AbstractStrategy strategy;
-            strategy = new RepeatStrategy();
+            try {
+                strategy = clazz.newInstance();
+            }catch(InstantiationException | IllegalAccessException ex) {
+                getMC().sendAttached(m.getDialog(), "Я не смогла загрузить данную стратегию :(", m.getMessageId());
+                Logger.warn("Could not create SeaBattle strategy \"" + clazz.getName() + "\" instance!", ex);
+                return;
+            }
             try {
                 strategy.validate();
                 games.put(uid, strategy);

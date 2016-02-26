@@ -42,8 +42,6 @@ public class BanController {
     
     public void save() {
         try {
-            if(banned.isEmpty())
-                return;
             StringBuilder sb = new StringBuilder();
             for(Long l : banned)
                 sb.append(l).append(" ");
