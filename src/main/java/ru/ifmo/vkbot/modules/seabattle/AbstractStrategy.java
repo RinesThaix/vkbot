@@ -16,7 +16,7 @@ public abstract class AbstractStrategy {
             NOT_CHECKED = 0, //неизвестно, что здесь
             SURELY_EMTPY = 1, //мы сюда походили, и здесь пусто
             EMPTY = 2, //мы сюда не ходили, но здесь должно быть пусто, т.к. где-то рядом корабль
-            WOUNDED_SHIP = 3, //раненный корабль
+            WOUNDED_SHIP = 3, //раненый корабль
             KILLED_SHIP = 4, //убитый корабль
             PLACED_SHIP = 5; //здесь стоит наш корабль
     
@@ -136,7 +136,7 @@ public abstract class AbstractStrategy {
             throw new NotValidMoveException(x, y, true);
         lastX = x;
         lastY = y;
-        char c = x == 10 ? 'К' : (char) (x + 'А');
+        char c = x == 9 ? 'К' : (char) (x + 'А');
         return c + "" + (y + 1);
     }
     

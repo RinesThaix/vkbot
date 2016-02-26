@@ -17,7 +17,7 @@ public class NotValidStrategyException extends SeaBattleException {
         sb.append("You placed ships wrong:\n");
         for(int i = 0; i < 10; ++i) {
             for(int j = 0; j < 10; ++j)
-                sb.append(matrix[i][j] == PLACED_SHIP ? "X" : ".").append(" ");
+                sb.append(matrix[j][i] == PLACED_SHIP ? "X" : ".").append(" ");
             sb.append("\n");
         }
         return sb.toString();
