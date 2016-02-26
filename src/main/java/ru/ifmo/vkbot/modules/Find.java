@@ -15,6 +15,7 @@ import ru.ifmo.vkbot.utils.PostExecutor;
 public class Find extends BotModule {
 
     private static final byte MAX_SEARCH_RESULTS = 50;
+    private static final byte DEFAULT_SEARCH_RESULTS = 3;
 
     public Find(VkBot vkbot) {
         super(vkbot);
@@ -31,15 +32,16 @@ public class Find extends BotModule {
         StringBuilder query = new StringBuilder();
         {    /// Парсинг трешака
             int index = 0;
-            byte t = 0;
+            byte t = DEFAULT_SEARCH_RESULTS;
             if (Character.isDigit(args[index].charAt(0))) {
                 try {
                     t = Byte.decode(args[index]);
                     ++index;
                 } catch (NumberFormatException e) {
-                    t = 0;
+                    t = DEFAULT_SEARCH_RESULTS;
                 }
                 if (t > MAX_SEARCH_RESULTS) t = MAX_SEARCH_RESULTS;
+                if (t < 1) t = DEFAULT_SEARCH_RESULTS;
             }
             countOfResults = t;
             if (shorter = args[index].equalsIgnoreCase("короче"))
