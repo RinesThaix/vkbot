@@ -115,14 +115,22 @@ public abstract class AbstractStrategy {
     public final boolean isPending() {
         return lastOutcome == Outcome.PENDING;
     }
-    
+
+    public final char SYMBOL_SHIP = '╋';
+    public final char SYMBOL_WOUNDED_SHIP = '┳';
+    public final char SYMBOL_NOT_CHECKED = '━';
+    public final char SYMBOL_SURELY_EMPTY = '┃';
+    public final char SYMBOL_OTHER = '┻';
+
     public String getMatrix(boolean bot) {
         int[][] matrix = bot ? this.bot : this.players;
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < 10; ++i) {
             for(int j = 0; j < 10; ++j)
-                sb.append(matrix[j][i] == PLACED_SHIP ? "X" : matrix[j][i] == WOUNDED_SHIP ? "x" :
-                        matrix[j][i] == NOT_CHECKED ? "?" : matrix[j][i] == SURELY_EMTPY ? "o" : ".")
+                sb.append(matrix[j][i] == PLACED_SHIP ? SYMBOL_SHIP :
+                        matrix[j][i] == WOUNDED_SHIP ? SYMBOL_WOUNDED_SHIP :
+                        matrix[j][i] == NOT_CHECKED ? SYMBOL_NOT_CHECKED :
+                        matrix[j][i] == SURELY_EMTPY ? SYMBOL_SURELY_EMPTY : SYMBOL_OTHER)
                         .append(" ");
             sb.append("\n");
         }
