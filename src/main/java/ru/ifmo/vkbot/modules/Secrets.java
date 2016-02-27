@@ -21,7 +21,7 @@ public class Secrets {
 
         @Override
         public void handle(Message m, String[] args) {
-            getMC().sendWithAttachment(m.getDialog(), "Встречайте: Mc Skakov!", m.getMessageId(), Attachment.PHOTO, new long[]{59649933, 401558093});
+            getMC().sendWithAttachment(m.getDialog(), "Встречайте: MC Skakov!", m.getMessageId(), Attachment.PHOTO, new long[]{59649933, 401558093});
         }
         
     }

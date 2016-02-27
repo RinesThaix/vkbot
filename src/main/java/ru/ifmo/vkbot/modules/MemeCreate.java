@@ -21,13 +21,10 @@ public class MemeCreate extends BotModule {
     public void handle(Message m, String[] args) {
         // говнокод
         boolean caps = "capsoff".equals(args[args.length - 1].toLowerCase()) || "некапс".equals(args[args.length - 1].toLowerCase());
-        if(caps) {
+        if (caps) {
             args = Arrays.copyOf(args, args.length - 2); // Мне лень разбираться в коде дальше, поэтому я просто оставлю это так
         } else {
-            if(args.length >= 2) {                       // Вынес апперкейс сюда
-                args[args.length - 1] = args[args.length - 1].toUpperCase();
-                args[args.length - 2] = args[args.length - 2].toUpperCase();
-            }
+            for (int i = 0; i < args.length; ++i) args[i] = args[i].toUpperCase();  // Вынес апперкейс сюда
         }
         // /говнокод
         if(m.getPhotos().isEmpty()) {
