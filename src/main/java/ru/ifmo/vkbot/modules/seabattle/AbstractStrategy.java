@@ -10,8 +10,10 @@ public abstract class AbstractStrategy {
 
     protected final int[][]
             bot = new int[10][10],
-            players = new int[10][10];
-    
+            players = new int[10][10],
+            bot_pw = new int[10][10],
+            players_pw = new int[10][10];
+
     protected final static int
             NOT_CHECKED = 0, //неизвестно, что здесь
             SURELY_EMTPY = 1, //мы сюда походили, и здесь пусто
@@ -19,7 +21,7 @@ public abstract class AbstractStrategy {
             WOUNDED_SHIP = 3, //раненый корабль
             KILLED_SHIP = 4, //убитый корабль
             PLACED_SHIP = 5; //здесь стоит наш корабль
-    
+
     private int
             shipCellsLeft_bot = 20,
             shipCellsLeft_player = 20,
@@ -28,16 +30,16 @@ public abstract class AbstractStrategy {
             three_player = 2,
             two_player = 3,
             one_player = 4;
-    
+
     private int lastX = -1, lastY = -1; //наш последний ход, ждем ответа игрока
     protected Outcome lastOutcome = Outcome.NOTHING;
-    
+
     public void validate() throws NotValidStrategyException {
         placeShips();
         if(!checkShips())
             throw new NotValidStrategyException(bot);
     }
-    
+
     public final Outcome playerMove(String move) throws NotValidMoveException {
         Pair<Integer, Integer> pa = parseMove(move);
         if(pa == null)
@@ -51,10 +53,10 @@ public abstract class AbstractStrategy {
         afterPlayerMove(x, y, o);
         return o;
     }
-    
+
     private Outcome playerMove0(int x, int y) throws NotValidMoveException {
         if(bot[x][y] == NOT_CHECKED) {
-            bot[x][y] = SURELY_EMTPY;
+            bot[x][y] = bot_pw[x][y] = SURELY_EMTPY;
             return Outcome.NOTHING;
         }
         if(--shipCellsLeft_bot == 0)
@@ -62,7 +64,7 @@ public abstract class AbstractStrategy {
         Integer u = checkAndGet(bot, x, y + 1), d = checkAndGet(bot, x, y - 1), l = checkAndGet(bot, x - 1, y),
                 r = checkAndGet(bot, x + 1, y);
         if(isNothing(u) && isNothing(d) && isNothing(l) && isNothing(r)) {
-            bot[x][y] = KILLED_SHIP;
+            bot[x][y] = bot_pw[x][y] = KILLED_SHIP;
             return Outcome.KILLED;
         }
         boolean killed = true;
@@ -103,40 +105,72 @@ public abstract class AbstractStrategy {
             }
         }
         if(killed) {
-            bot[x][y] = KILLED_SHIP;
-            //Здесь, по идее, было бы неплохо обновить все WOUNDED_SHIP на убитые, но нам это не особо нужно, так что :)
+            bot[x][y] = bot_pw[x][y] = KILLED_SHIP;
+            for(int dx = x - 1; dx >= 0; --dx) {
+                Integer v = checkAndGet(bot, dx, y);
+                if(isNothing(v))
+                    break;
+                bot[dx][y] = bot_pw[dx][y] = KILLED_SHIP;
+            }
+            for(int dx = x + 1; dx < 10; ++dx) {
+                Integer v = checkAndGet(bot, dx, y);
+                if(isNothing(v))
+                    break;
+                bot[dx][y] = bot_pw[dx][y] = KILLED_SHIP;
+            }
+            for(int dy = y - 1; dy >= 0; --dy) {
+                Integer v = checkAndGet(bot, x, dy);
+                if(isNothing(v))
+                    break;
+                bot[x][dy] = bot_pw[x][dy] = KILLED_SHIP;
+            }
+            for(int dy = y + 1; dy < 10; ++dy) {
+                Integer v = checkAndGet(bot, x, dy);
+                if(isNothing(v))
+                    break;
+                bot[x][dy] = bot_pw[x][dy] = KILLED_SHIP;
+            }
             return Outcome.KILLED;
         }else {
-            bot[x][y] = WOUNDED_SHIP;
+            bot[x][y] = bot_pw[x][y] = WOUNDED_SHIP;
             return Outcome.WOUNDED;
         }
     }
-    
+
     public final boolean isPending() {
         return lastOutcome == Outcome.PENDING;
     }
 
-    public final char SYMBOL_SHIP = '╋';
-    public final char SYMBOL_WOUNDED_SHIP = '┳';
-    public final char SYMBOL_NOT_CHECKED = '━';
-    public final char SYMBOL_SURELY_EMPTY = '┃';
-    public final char SYMBOL_OTHER = '┻';
+    public final static char SYMBOL_SHIP = '╋';
+    public final static char SYMBOL_WOUNDED_SHIP = '┳';
+    public final static char SYMBOL_NOT_CHECKED = '━';
+    public final static char SYMBOL_SURELY_EMPTY = '┃';
+    public final static char SYMBOL_OTHER = '┻';
 
-    public String getMatrix(boolean bot) {
-        int[][] matrix = bot ? this.bot : this.players;
+    public static String getMatrix(int[][] matrix) {
         StringBuilder sb = new StringBuilder();
+        sb.append("АБВГДЕЖЗИК#\n");
         for(int i = 0; i < 10; ++i) {
             for(int j = 0; j < 10; ++j)
                 sb.append(matrix[j][i] == PLACED_SHIP ? SYMBOL_SHIP :
                         matrix[j][i] == WOUNDED_SHIP ? SYMBOL_WOUNDED_SHIP :
                         matrix[j][i] == NOT_CHECKED ? SYMBOL_NOT_CHECKED :
-                        matrix[j][i] == SURELY_EMTPY ? SYMBOL_SURELY_EMPTY : SYMBOL_OTHER)
-                        .append(" ");
-            sb.append("\n");
+                        matrix[j][i] == SURELY_EMTPY ? SYMBOL_SURELY_EMPTY : SYMBOL_OTHER);
+            sb.append(" ").append(i == 9 ? "10" : "0" + (i + 1)).append('\n');
         }
         return sb.toString();
     }
-    
+
+    public String getBotViewMatrix(boolean bot) {
+        return getMatrix(bot ? this.bot : this.players);
+    }
+
+    public String getPlayerViewMatrix(boolean bot) {
+        if(!bot && players_pw[0][0] == -1)
+            return null;
+        return getMatrix(bot ? this.bot_pw : this.players_pw);
+    }
+
     public final String botMove() throws NotValidMoveException, FoulPlayException {
         Outcome previous = lastOutcome;
         lastOutcome = Outcome.PENDING;
@@ -151,7 +185,7 @@ public abstract class AbstractStrategy {
         char c = x == 9 ? 'К' : (char) (x + 'А');
         return c + "" + (y + 1);
     }
-    
+
     public final Outcome updateLastMove(String outcome) throws UnknownOutcomeException, FoulPlayException {
         if(--cellsLeft_player < shipCellsLeft_player - 1)
             throw new FoulPlayException();
@@ -159,6 +193,7 @@ public abstract class AbstractStrategy {
             case "мимо":
                 players[lastX][lastY] = SURELY_EMTPY;
                 return lastOutcome = Outcome.NOTHING;
+            case "ранил":
             case "ранила":
                 --shipCellsLeft_player;
                 players[lastX][lastY] = WOUNDED_SHIP;
@@ -202,6 +237,7 @@ public abstract class AbstractStrategy {
                 if(x1 != x2 && y1 != y1 || x2 - x1 + 1 > 4 || y2 - y1 + 1 > 4)
                     throw new FoulPlayException();
                 return lastOutcome = Outcome.WOUNDED;
+            case "убил":
             case "убила":
                 if(--shipCellsLeft_player == 0)
                     return lastOutcome = Outcome.WIN;

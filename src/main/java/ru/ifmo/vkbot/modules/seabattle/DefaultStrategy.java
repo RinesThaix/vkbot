@@ -9,7 +9,7 @@ import ru.ifmo.vkbot.utils.Pair;
  */
 public class DefaultStrategy extends AbstractStrategy {
     
-    private final Random rand = new Random();
+    protected final Random rand = new Random();
 
     @Override
     protected void placeShips() {
