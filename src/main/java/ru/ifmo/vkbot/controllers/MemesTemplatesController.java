@@ -12,7 +12,7 @@ import ru.ifmo.vkbot.utils.ImagesWorker;
  */
 public class MemesTemplatesController {
     
-    private final Set<String> templates = new HashSet();
+    private final Set<String> templates = new HashSet<>();
 
     public MemesTemplatesController() {
         File folder = new File("templates");

@@ -50,8 +50,7 @@ public class Find extends BotModule {
             for (; index < args.length; ++index)
                 query.append(args[index]).append(" ");
         }
-        String s = query.toString();
-        s = PostExecutor.encode(s.substring(0, s.length() - 1));
+        String s = PostExecutor.encode(query.toString().trim());
         String answer = PostExecutor.executeGet("http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + s);
         try {
             StringBuilder sb = new StringBuilder();

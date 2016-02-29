@@ -1,6 +1,5 @@
 package ru.ifmo.vkbot.utils.sql;
 
-@SuppressWarnings("deprecation")
 public class ConnectorBuilder {
 
     private Connector connector;
@@ -93,6 +92,7 @@ public class ConnectorBuilder {
         return this;
     }
 
+    @SuppressWarnings("deprecation")
     public Connector build(boolean initialize) {
         if ((this.host == null) || (this.name == null) || (this.user == null) || (this.password == null) || (this.database == null)) {
             throw new IllegalStateException("Required fields not set!");

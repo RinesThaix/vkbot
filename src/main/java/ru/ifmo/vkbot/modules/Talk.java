@@ -11,7 +11,7 @@ import ru.ifmo.vkbot.structures.Message;
  */
 public class Talk {
     
-    public static Set<Long> talkingWith = new HashSet();
+    public static Set<Long> talkingWith = new HashSet<>();
 
     public static class StartTalking extends BotModule {
 

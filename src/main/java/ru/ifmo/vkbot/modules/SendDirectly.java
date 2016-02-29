@@ -25,14 +25,13 @@ public class SendDirectly extends BotModule {
         String msg = sb.toString();
         if(msg.isEmpty())
             return;
-        msg = msg.substring(0, msg.length() - 1);
         long uid = -1;
         try {
             uid = Long.parseLong(args[0]);
         }catch(NumberFormatException ex) {
             getMC().sendAttached(m.getDialog(), "Идентификатор пользователя указан неверно!", m.getMessageId());
         }
-        getMC().send(uid, msg);
+        getMC().send(uid, msg.trim());
     }
 
 }

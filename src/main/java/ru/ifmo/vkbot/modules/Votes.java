@@ -13,7 +13,7 @@ import ru.ifmo.vkbot.structures.Vote;
  */
 public class Votes {
     
-    private final static Map<Long, Vote> votes = new HashMap();
+    private final static Map<Long, Vote> votes = new HashMap<>();
     
     public static class VoteCreation extends BotModule {
 

@@ -41,7 +41,7 @@ public abstract class BotModule {
         return true;
     }
 
-    public abstract void handle(Message m, String[] args);
+    protected abstract void handle(Message m, String[] args);
     
     protected VkBot getVkBot() {
         return vkbot;
@@ -65,9 +65,7 @@ public abstract class BotModule {
         StringBuilder sb = new StringBuilder();
         for(String s : args)
             sb.append(s).append(" ");
-        String s = sb.toString();
-        s = s.substring(0, s.length() - 1);
-        return s;
+        return sb.toString().trim();
     }
     
     protected String[] parseQuotes(String[] args, int amount, int startArg) {

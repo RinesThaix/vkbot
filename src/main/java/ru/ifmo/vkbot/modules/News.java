@@ -27,11 +27,11 @@ public class News extends BotModule {
         try {
             Document doc = Jsoup.connect(url).get();
             Elements all = doc.select("div.list_item");
-            List<String> news = new ArrayList();
+            List<String> news = new ArrayList<>();
             for(Element item : all)
                 news.add("- " + item.select("h3").text() + "\n");
-            List<String> list = new ArrayList();
-            Set<Integer> used = new HashSet();
+            List<String> list = new ArrayList<>();
+            Set<Integer> used = new HashSet<>();
             if(all.size() <= 10) {
                 for(String s : news)
                     list.add(s);

@@ -47,9 +47,8 @@ public class CustomHandler extends BotModule {
         StringBuilder sb = new StringBuilder();
         for(String s : answers)
             sb.append(s).append("|");
-        String s = sb.toString();
-        s = s.substring(0, s.length() - 1);
-        getVkBot().getConnector().addToQueue("UPDATE vkbot_text_modules SET answers='%s' WHERE name='%s'", s, name);
+        getVkBot().getConnector().addToQueue("UPDATE vkbot_text_modules SET answers='%s' WHERE name='%s'",
+                sb.toString().trim(), name);
     }
 
 }

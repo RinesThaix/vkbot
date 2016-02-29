@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,27 +33,23 @@ public class Configuration {
         setObject(key, listToString(list));
     }
     
-    private String listToString(List list) {
+    private String listToString(List<String> list) {
         StringBuilder sb = new StringBuilder();
-        for(Object o : list)
-            sb.append(o.toString()).append(" ");
+        for(String s : list)
+            sb.append(s).append(" ");
         String val = sb.toString();
         if(!val.isEmpty())
-            val = val.substring(0, val.length() - 1);
+            val = val.trim();
         return val;
     }
     
-    public List getList(String key, List defaultValue) {
+    public List<String> getList(String key, List<String> defaultValue) {
         String s = getString(key, null);
-        if(s == null) {
+        if (s == null) {
             setList(key, defaultValue);
             return defaultValue;
         }
-        String[] spl = s.split(" ");
-        List l = new ArrayList(spl.length);
-        for(String s2 : spl)
-            l.add(s2);
-        return l;
+        return Arrays.asList(s.split(" "));
     }
     
     public int getInt(String key, int defaultValue) {
@@ -106,6 +102,10 @@ public class Configuration {
         OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
         prop.store(writer, "");
         writer.close();
+    }
+    
+    public String getName() {
+        return name;
     }
     
 }

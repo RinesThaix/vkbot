@@ -14,13 +14,13 @@ public class Vote {
     private final String name;
     private final Map<Integer, Integer> results;
     private final Map<Integer, String> options;
-    private final Map<Long, Integer> votes = new HashMap();
+    private final Map<Long, Integer> votes = new HashMap<>();
     private final long creationTime;
     
     public Vote(String name, String... options) {
         this.name = name;
-        this.results = new HashMap(options.length);
-        this.options = new HashMap(options.length);
+        this.results = new HashMap<>(options.length);
+        this.options = new HashMap<>(options.length);
         for(int i = 0; i < options.length; ++i) {
             this.options.put(i, options[i]);
             this.results.put(i, 0);

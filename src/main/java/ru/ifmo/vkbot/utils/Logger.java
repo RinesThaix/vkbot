@@ -12,6 +12,10 @@ public class Logger {
     private static void write(String s) {
         System.out.println(s);
     }
+    
+    private static void write(String s, Object... args) {
+        write(String.format(s, args));
+    }
 
     private static String getTime() {
         Date t = new Date();
@@ -24,14 +28,7 @@ public class Logger {
     }
 
     public static void log(String s) {
-        StringBuilder sb = new StringBuilder();
-        write(sb
-                .append("[")
-                .append(Thread.currentThread().getName())
-                .append("/INFO] ")
-                .append(getTime())
-                .append(": ")
-                .append(s).toString());
+        write("[%s/INFO] %s: %s", Thread.currentThread().getName(), getTime(), s);
     }
     
     public static void debug(String s) {
@@ -43,25 +40,13 @@ public class Logger {
     }
 
     public static void warn(String s) {
-        warn(s, null);
+        warn(s, null); 
     }
 
     public static void warn(String s, Throwable ex) {
-        StringBuilder sb = new StringBuilder();
-        write(sb
-                .append("[")
-                .append(Thread.currentThread().getName())
-                .append("/WARNING] ")
-                .append(getTime())
-                .append(": ")
-                .append(s).toString());
+        write("[%s/WARNING] %s: %s", Thread.currentThread().getName(), getTime(), s);
         if(ex != null) {
-            sb = new StringBuilder();
-            sb.append("[")
-                    .append(Thread.currentThread().getName())
-                    .append("/EXCEPTION] ");
-            String prefix = sb.toString();
-            write(prefix);
+            write("[%s/EXCEPTION] ", Thread.currentThread().getName());
             ex.printStackTrace();
         }
     }

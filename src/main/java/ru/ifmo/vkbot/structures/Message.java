@@ -15,9 +15,9 @@ public class Message {
     private final long senderId;
     private final long dialogId;
     private long[] members = null;
-    private final Set<Photo> photos = new HashSet();
-    private final Set<Audio> audios = new HashSet();
-    private final Set<Video> videos = new HashSet();
+    private final Set<Photo> photos = new HashSet<>();
+    private final Set<Audio> audios = new HashSet<>();
+    private final Set<Video> videos = new HashSet<>();
     
     public Message(String message, long messageId, long sender, long dialog) {
         this.message = message;

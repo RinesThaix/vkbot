@@ -27,31 +27,33 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 public class ClassificationController implements Serializable {
 
     private final static String name = "vkbot.wdb";
-    
+
     private final int handlersSize;
     private final Instances data;
     private final StringToWordVector filter = new StringToWordVector();
     private final Classifier cls = new J48();
     private boolean isUpToDate;
-    
+
     private ClassificationController() {
         Set<String> handlers = VkBot.getInstance().getMessagesController().getLinker().getHandlers();
         this.handlersSize = handlers.size();
         FastVector attributes = new FastVector(handlersSize);
         attributes.addElement(new Attribute("Message", (FastVector) null));
         FastVector classes = new FastVector(handlersSize);
-        for(String handler : handlers)
+        for (String handler : handlers) {
             classes.addElement(handler);
+        }
         attributes.addElement(new Attribute("Class", classes));
         data = new Instances(name, attributes, 10000);
         data.setClassIndex(data.numAttributes() - 1);
-        
-        for(String key : handlers)
+
+        for (String key : handlers) {
             study(key, key);
+        }
     }
-    
+
     private final List<Pair<String, String>> toRemember = new ArrayList();
-    
+
     public void study(String message, String handler) {
         try {
             message = message.toLowerCase();
@@ -60,15 +62,15 @@ public class ClassificationController implements Serializable {
             instance.setClassValue(handler);
             data.add(instance);
             isUpToDate = false;
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             Logger.warn("Could not study for \"" + handler + "\"!", ex);
         }
     }
-    
+
     public String classify(String message) {
         message = message.toLowerCase();
         try {
-            if(!isUpToDate) {
+            if (!isUpToDate) {
                 filter.setInputFormat(data);
                 Instances filteredData = Filter.useFilter(data, filter);
                 cls.buildClassifier(filteredData);
@@ -79,21 +81,21 @@ public class ClassificationController implements Serializable {
             filter.input(instance);
             instance = filter.output();
             return data.classAttribute().value((int) cls.classifyInstance(instance));
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             Logger.warn("Could not classify message!", ex);
             return "null";
         }
     }
-    
+
     public static ClassificationController load() {
         ClassificationController cc = new ClassificationController();
         try {
             Scanner scan = new Scanner(new FileReader("vkbot.storage"));
-            while(scan.hasNextLine()) {
+            while (scan.hasNextLine()) {
                 String[] args = scan.nextLine().split("\\|");
                 cc.study(args[0], args[1]);
             }
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             Logger.warn("Could not load and pre-teach ClassificationController!", ex);
         }
         return cc;
@@ -107,14 +109,15 @@ public class ClassificationController implements Serializable {
 //            return new ClassificationController();
 //        }
     }
-    
+
     public void save() {
         try {
             PrintWriter pw = new PrintWriter(new FileWriter("vkbot.storage"));
-            for(Pair<String, String> p : toRemember)
+            for (Pair<String, String> p : toRemember) {
                 pw.println(p.getA() + "|" + p.getB());
+            }
             pw.close();
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             Logger.warn("Could not save classification data!", ex);
         }
         //For future usage
@@ -126,11 +129,11 @@ public class ClassificationController implements Serializable {
 //            Logger.warn("Could not serialize ClassificationController!", ex);
 //        }
     }
-    
+
     public Classifier getClassifier() {
         return cls;
     }
-    
+
     private Instance makeInstance(String text, Instances data) {
         Instance instance = new Instance(2);
         Attribute messageAtt = data.attribute("Message");
@@ -138,5 +141,5 @@ public class ClassificationController implements Serializable {
         instance.setDataset(data);
         return instance;
     }
-    
+
 }

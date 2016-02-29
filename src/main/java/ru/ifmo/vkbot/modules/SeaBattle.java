@@ -41,7 +41,9 @@ public class SeaBattle extends BotModule {
             if(getVkBot().isAdministrator(uid)) {
                 sb.append("- [A] мб принт - попросить Милашу вывести свое поле и информацию о вашем поле.\n");
             }
-            sb.append("Легенда карты: Ⓧ - убит, ⓧ - ранен, ⓞ - пусто, ⑔ - неизвестно.\n");
+            sb.append("Легенда карты: ").append(AbstractStrategy.SYMBOL_SHIP).append(" - убит или ранен, ")
+                    .append(AbstractStrategy.SYMBOL_SURELY_EMPTY).append(" - пусто, ")
+                    .append(AbstractStrategy.SYMBOL_NOT_CHECKED).append(" - неизвестно.\n");
             getMC().sendAttached(m.getDialog(), sb.toString(), m.getMessageId());
             return;
         }
@@ -101,13 +103,13 @@ public class SeaBattle extends BotModule {
                 try {
                     Outcome o = game.playerMove(args[0]);
                     if(o == Outcome.WIN) {
-                        getMC().sendAttached(m.getDialog(), "Эх, ладно, в этот раз твоя взяла. Ты победил. Поздравляю.", m.getMessageId());
+                        getMC().sendAttached(m.getDialog(), "Эх, ладно, в этот раз твоя взяла. Ты победил. Поздравляю.\n" + game.getPlayerViewMatrix(true), m.getMessageId());
                         games.remove(uid);
                     }else if(o == Outcome.WOUNDED || o == Outcome.KILLED) {
-                        getMC().sendAttached(m.getDialog(), (o == Outcome.WOUNDED ? "Ранил" : "Убил") + "!\nХоди.", m.getMessageId());
+                        getMC().sendAttached(m.getDialog(), (o == Outcome.WOUNDED ? "Ранил" : "Убил") + "!\nХоди.\n" + game.getPlayerViewMatrix(true), m.getMessageId());
                     }else {
                         try {
-                            getMC().sendAttached(m.getDialog(), "Мимо!\nМой ход: " + game.botMove(), m.getMessageId());
+                            getMC().sendAttached(m.getDialog(), "Мимо!\nМой ход: " + game.botMove() + "\n" + game.getPlayerViewMatrix(true), m.getMessageId());
                         }catch(SeaBattleException ex) {
                             if(ex instanceof NotValidMoveException) {
                                 getMC().sendAttached(m.getDialog(), "Стратегия сделала невозможный ход!", m.getMessageId());

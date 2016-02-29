@@ -40,39 +40,68 @@ public class Scheduler extends BotModule {
         if(args[++iday].equals("на"))
             ++iday;
         String day = args[iday];
-        if(day.equals("сегодня"))
-            day = new RDate().getDayOfTheWeek();
-        else if(day.equals("вчера")) {
-            RDate date = new RDate();
-            date.addDays(-1);
-            day = date.getDayOfTheWeek();
-        }else if(day.equals("позавчера")) {
-            RDate date = new RDate();
-            date.addDays(-2);
-            day = date.getDayOfTheWeek();
-        }else if(day.equals("завтра")) {
-            RDate date = new RDate();
-            date.addDay();
-            day = date.getDayOfTheWeek();
-        }else if(day.equals("послезавтра")) {
-            RDate date = new RDate();
-            date.addDays(2);
-            day = date.getDayOfTheWeek();
+        switch (day) {
+            case "сегодня":
+                day = new RDate().getDayOfTheWeek();
+                break;
+            case "вчера": {
+                RDate date = new RDate();
+                date.addDays(-1);
+                day = date.getDayOfTheWeek();
+                break;
+            }case "позавчера": {
+                RDate date = new RDate();
+                date.addDays(-2);
+                day = date.getDayOfTheWeek();
+                break;
+            }case "завтра": {
+                RDate date = new RDate();
+                date.addDay();
+                day = date.getDayOfTheWeek();
+                break;
+            }case "послезавтра": {
+                RDate date = new RDate();
+                date.addDays(2);
+                day = date.getDayOfTheWeek();
+                break;
+            }
         }
         switch(day) {
-            case "пн": case "пнд":
-            case "понедельник": iday = 1; break;
+            case "пн":
+            case "пнд":
+            case "понедельник":
+                iday = 1;
+                break;
             case "вт":
-            case "вторник": iday = 2; break;
+            case "вторник":
+                iday = 2;
+                break;
             case "ср":
-            case "среду": case "среда": iday = 3; break;
-            case "чв": case "чет":
-            case "четверг": iday = 4; break;
-            case "пт": case "пят":
-            case "пятницу": case "пятница": iday = 5; break;
-            case "сб": case "суб":
-            case "субботу": case "суббота": iday = 6; break;
-            case "вск": case "воск": case "вс": case "вскр":
+            case "среду":
+            case "среда":
+                iday = 3;
+                break;
+            case "чв":
+            case "чет":
+            case "четверг":
+                iday = 4;
+                break;
+            case "пт":
+            case "пят":
+            case "пятницу":
+            case "пятница":
+                iday = 5;
+                break;
+            case "сб":
+            case "суб":
+            case "субботу":
+            case "суббота":
+                iday = 6;
+                break;
+            case "вск":
+            case "воск":
+            case "вс":
+            case "вскр":
             case "воскресенье": {
                 getMC().sendAttached(m.getDialog(), "В воскресенье нет пар, дурачок!", m.getMessageId());
                 return;
@@ -82,7 +111,9 @@ public class Scheduler extends BotModule {
             }
         }
         String url = "http://www.ifmo.ru/ru/schedule/0/" + group + "/raspisanie_zanyatiy_" + group + ".htm";
-        List<String> first = new ArrayList(), second = new ArrayList(), third = new ArrayList();
+        List<String> first = new ArrayList<>(),
+                second = new ArrayList<>(),
+                third = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(url).get();
             Elements all = doc.select("div.container").select("div.page-content").select("div.rasp_tabl_day")

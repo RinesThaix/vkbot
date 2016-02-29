@@ -37,7 +37,7 @@ public class ModersManagement {
                 return;
             }
             Staff.addModerator(uid);
-            List staff = getVkBot().getModerators();
+            List<Long> staff = getVkBot().getModerators();
             staff.add(uid);
             Configuration config = getVkBot().getConfig();
             config.setList("staff", staff);
@@ -76,7 +76,7 @@ public class ModersManagement {
                 return;
             }
             Staff.removeModerator(uid);
-            List staff = getVkBot().getModerators();
+            List<Long> staff = getVkBot().getModerators();
             staff.remove(uid);
             Configuration config = getVkBot().getConfig();
             config.setList("staff", staff);
