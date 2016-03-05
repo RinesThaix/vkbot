@@ -7,6 +7,8 @@ import ru.ifmo.vkbot.VkBot;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
@@ -91,11 +93,13 @@ public class ImagesWorker {
     }
 
     private static File addTextAndSave(BufferedImage image, String name, String ext, String textU, String textD) throws IOException {
-        Graphics g = image.getGraphics();
-        Font f = new Font("Impact", Font.BOLD, 60);
-        g.setFont(f);
+        Graphics2D g = image.createGraphics();
+        g.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        Font font = new Font("Impact", Font.BOLD, 60);
+        g.setFont(font);
         float size = 60f;
-        g.setFont(g.getFont().deriveFont(size));
         while (g.getFontMetrics().stringWidth(textU) >= image.getWidth()) {
             g.setFont(g.getFont().deriveFont(size /= 2));
         }
@@ -103,7 +107,7 @@ public class ImagesWorker {
         int height = g.getFontMetrics().getHeight();
         float offsetUpY = image.getHeight() * 0.05f + height;
         float offsetDownY = image.getHeight() * 0.95f;
-        printWithOutline(g, textU, (image.getWidth() - width) >> 1, (int) offsetUpY, 3, Color.WHITE, Color.BLACK);
+        printWithOutline(g, textU, (image.getWidth() - width) >> 1, (int) offsetUpY, Color.WHITE, Color.BLACK);
         size = 60f;
         g.setFont(g.getFont().deriveFont(size));
         while (g.getFontMetrics().stringWidth(textD) >= image.getWidth()) {
@@ -111,29 +115,25 @@ public class ImagesWorker {
         }
         width = g.getFontMetrics().stringWidth(textD);
         g.setColor(Color.BLACK);
-        printWithOutline(g, textD, (image.getWidth() - width) >> 1, (int) offsetDownY, 3, Color.WHITE, Color.BLACK);
+        printWithOutline(g, textD, (image.getWidth() - width) >> 1, (int) offsetDownY, Color.WHITE, Color.BLACK);
         g.dispose();
         File fi = new File(folder, name);
         ImageIO.write(image, ext, fi);
         return fi;
     }
 
-    private static void printWithOutline(Graphics g, String text, int x, int y, int width, Color in, Color out) {
+    private static void printWithOutline(Graphics2D g, String text, int x, int y, Color in, Color out) {
+        FontRenderContext frc = g.getFontRenderContext();
+        Font f = g.getFont();
+        GlyphVector gv = f.createGlyphVector(frc, text);
+        Shape shape = gv.getOutline(x, y);
+        g.setClip(shape);
+        g.setPaint(in);
+        g.fillRect(0,0,10000,10000);
+        g.setClip(null);
+        g.setStroke(new BasicStroke(2f));
         g.setColor(out);
-        g.drawString(text, NW(x, width), NW(y, width));
-        g.drawString(text, NW(x, width), SE(y, width));
-        g.drawString(text, SE(x, width), NW(y, width));
-        g.drawString(text, SE(x, width), SE(y, width));
-        g.setColor(in);
-        g.drawString(text, x, y);
+        g.draw(shape);
     }
-    
-    private static int NW(int p, int distance) {
-        return p - distance;
-    }
-    
-    private static int SE(int p, int distance) {
-        return p + distance;
-    }
-    
+
 }
