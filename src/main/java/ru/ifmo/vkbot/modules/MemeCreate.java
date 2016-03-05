@@ -22,7 +22,7 @@ public class MemeCreate extends BotModule {
         // говнокод
         boolean caps = "capsoff".equals(args[args.length - 1].toLowerCase()) || "некапс".equals(args[args.length - 1].toLowerCase());
         if (caps) {
-            args = Arrays.copyOf(args, args.length - 2); // Мне лень разбираться в коде дальше, поэтому я просто оставлю это так
+            args = Arrays.copyOf(args, args.length - 1); // Мне лень разбираться в коде дальше, поэтому я просто оставлю это так
         } else {
             for (int i = 0; i < args.length; ++i) args[i] = args[i].toUpperCase();  // Вынес апперкейс сюда
         }

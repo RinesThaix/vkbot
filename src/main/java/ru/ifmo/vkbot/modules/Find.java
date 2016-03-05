@@ -7,6 +7,10 @@ import ru.ifmo.vkbot.structures.Message;
 import ru.ifmo.vkbot.utils.Logger;
 import ru.ifmo.vkbot.utils.PostExecutor;
 
+import java.net.URLDecoder;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  *
  * @author RinesThaix
@@ -64,9 +68,9 @@ public class Find extends BotModule {
             sb.append("Вот, что мне удалось найти:\n");
             for(int i = 0; i < Math.min(countOfResults, array.size()); ++i) {
                 json = (JSONObject) array.get(i);
-                String url = (String) json.get("url");
-                String title = (String) json.get("titleNoFormatting");
-                String description = (String) json.get("content");
+                String url = URLDecoder.decode((String) json.get("url"), "UTF-8").replace(' ', '+');
+                String title = StringEscapeUtils.unescapeHtml((String) json.get("titleNoFormatting"));
+                String description = StringEscapeUtils.unescapeHtml(((String) json.get("content")).replace('\n', ' ').replace('\r', ' '));
                 sb.append("(").append(i + 1).append(") ").append(title).append('\n');
                 if (!shorter) sb.append("Ссылка: ").append(url).append('\n').append(description).append("\n\n");
                 else sb.append('\t').append(url).append('\n');
