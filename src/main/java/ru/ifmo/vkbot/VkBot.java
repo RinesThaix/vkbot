@@ -29,7 +29,7 @@ public class VkBot {
     private final static String version = "1.1.3";
     private final static JSONParser parser = new JSONParser();
 
-    private static VkBot instance = new VkBot();
+    private static VkBot instance;
 
     private Configuration config;
     private String access_token;
@@ -203,7 +203,7 @@ public class VkBot {
     }
 
     public static void main(String[] args) {
-
+        new VkBot();
     }
 
 }
